@@ -1,0 +1,36 @@
+name: main
+description: Creates action files for Go code
+inputs:
+  EMAIL:
+    description: ""
+    required: false
+  GITHUB_TOKEN:
+    description: ""
+    required: false
+  color:
+    description: Set branding color.
+    required: false
+  desc:
+    description: Override action description, the default description is the package synopsis.
+    required: false
+  icon:
+    description: Set branding icon.
+    required: false
+  name:
+    description: Override action name, the default name is the package name.
+    required: false
+  path:
+    description: Path to main package.
+    required: false
+runs:
+  using: docker
+  image: Dockerfile
+  env:
+    EMAIL: "${{ inputs.EMAIL }}"
+    GITHUB_TOKEN: "${{ inputs.GITHUB_TOKEN }}"
+  args:
+  - "-color=${{ inputs.color }}"
+  - "-desc=${{ inputs.desc }}"
+  - "-icon=${{ inputs.icon }}"
+  - "-name=${{ inputs.name }}"
+  - "-path=${{ inputs.path }}"
