@@ -1,0 +1,15 @@
+on:
+    pull_request:
+      branches: [master]
+    push:
+      branches: [master]
+jobs:
+    goaction:
+      runs-on: ubuntu-latest
+      steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+      - name: Update action files
+        uses: ./
+        with:
+          path: cmd/goaction
