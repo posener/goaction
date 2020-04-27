@@ -30,6 +30,7 @@ func PRComment(ctx context.Context, token string, actionID string, content strin
 
 	gh := github.NewClient(oauthClient)
 
+	// Look for an existing review. reviewID<0 means that we didn't find a matching review.
 	reviewID := int64(-1)
 	reviews, _, err := gh.PullRequests.ListReviews(ctx, own, prj, num, nil)
 	if err != nil {
@@ -42,8 +43,8 @@ func PRComment(ctx context.Context, token string, actionID string, content strin
 		}
 	}
 
+	// Update or post a new review.
 	commentBody := hiddenSignature + "\n\n" + content
-
 	if reviewID >= 0 {
 		log.Printf("Updating existing review: %d\n", reviewID)
 		_, _, err = gh.PullRequests.UpdateReview(ctx, own, prj, num, reviewID, commentBody)
