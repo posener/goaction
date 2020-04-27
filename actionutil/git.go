@@ -27,6 +27,8 @@ func GitDiff(path string) (string, error) {
 
 // Commits and pushes a list of files
 func GitCommitPush(paths []string, message string) error {
+	branch := goaction.Branch()
+
 	err := script.Exec("git", "reset").ToStdout()
 	if err != nil {
 		return fmt.Errorf("git reset: %s", err)
@@ -39,5 +41,9 @@ func GitCommitPush(paths []string, message string) error {
 	if err != nil {
 		return fmt.Errorf("git commit: %s", err)
 	}
-	return script.Exec("git", "push", "origin", "HEAD:"+goaction.Branch()).ToStdout()
+	err = script.Exec("git", "pull", "--rebase", "origin/"+branch).ToStdout()
+	if err != nil {
+		return fmt.Errorf("git pull rebase: %s", err)
+	}
+	return script.Exec("git", "push", "origin", "HEAD:"+branch).ToStdout()
 }
