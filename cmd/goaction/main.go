@@ -15,12 +15,10 @@ import (
 	"text/template"
 
 	"github.com/goccy/go-yaml"
-	"github.com/google/go-github/v31/github"
 	"github.com/posener/goaction"
 	"github.com/posener/goaction/actionutil"
 	"github.com/posener/goaction/metadata"
 	"github.com/posener/script"
-	"golang.org/x/oauth2"
 )
 
 var (
@@ -83,7 +81,8 @@ func main() {
 	}
 
 	// Create dockerfile
-	err = script.Writer("template", func(w io.Writer) error { return tmpls.Execute(w, struct{ Path string }{Path: *path}) }).
+	data := tmplData{Path: *path}
+	err = script.Writer("template", func(w io.Writer) error { return tmpl.Execute(w, data) }).
 		ToFile(dockerfile)
 	if err != nil {
 		log.Fatal(err)
@@ -141,7 +140,7 @@ func stagedDiff() string {
 
 // Commit and push chnages to upstream branch.
 func push() {
-	err := script.Exec("git", "commit", "-m", "Update readme according to Go doc").ToStdout()
+	err := script.Exec("git", "commit", "-m", "Update action files").ToStdout()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -151,57 +150,26 @@ func push() {
 	}
 }
 
-const commentHeader = "[GoAction](https://github.com/posener/goaction) diff:"
-
 func pr(diff string) {
 	if githubToken == "" {
 		log.Println("In order to add request comment, set the GITHUB_TOKEN input.")
 		return
 	}
 
-	var (
-		own = goaction.Owner()
-		prj = goaction.Project()
-		num = goaction.PrNum()
-	)
+	const commentHeader = "[goaction](https://github.com/posener/goaction) diff:"
 
 	ctx := context.Background()
-	oauthClient := oauth2.NewClient(
-		ctx,
-		oauth2.StaticTokenSource(&oauth2.Token{AccessToken: githubToken}))
-
-	gh := github.NewClient(oauthClient)
-
-	exitingReviewID := int64(-1)
-	comments, _, err := gh.PullRequests.ListComments(ctx, own, prj, num, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-	for _, c := range comments {
-		if strings.HasPrefix(c.GetBody(), commentHeader) {
-			exitingReviewID = c.GetID()
-			break
-		}
-	}
-
-	commentBody := commentHeader + "\n\n" + diff
-
-	if exitingReviewID > 0 {
-		log.Printf("Updating existing review: %d\n", exitingReviewID)
-		_, _, err = gh.PullRequests.UpdateReview(ctx, own, prj, num, exitingReviewID, commentBody)
-	} else {
-		log.Printf("Creating new review")
-		_, _, err = gh.PullRequests.CreateReview(ctx, own, prj, num, &github.PullRequestReviewRequest{
-			Body:  github.String(commentBody),
-			Event: github.String("COMMENT"),
-		})
-	}
+	err := actionutil.PRComment(ctx, githubToken, "goaction", commentHeader+"\n\n"+diff)
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
-var tmpls = template.Must(template.New("dockerfile").Parse(`
+type tmplData struct {
+	Path string
+}
+
+var tmpl = template.Must(template.New("dockerfile").Parse(`
 FROM golang:1.14.1-alpine3.11
 RUN apk add git
 

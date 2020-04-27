@@ -4,6 +4,7 @@ go 1.13
 
 require (
 	github.com/goccy/go-yaml v1.4.3
+	github.com/google/go-github v17.0.0+incompatible
 	github.com/google/go-github/v31 v31.0.0
 	github.com/posener/goactions v0.0.0-20200426224833-e4fc82d071cb // indirect
 	github.com/posener/script v1.1.3
