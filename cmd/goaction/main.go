@@ -22,6 +22,7 @@ import (
 )
 
 var (
+	//goaction:required
 	path  = flag.String("path", "", "Path to main Go file, this file should contain all defined flags and environment variables.")
 	name  = flag.String("name", "", "Override action name, the default name is the package name.")
 	desc  = flag.String("desc", "", "Override action description, the default description is the package synopsis.")
