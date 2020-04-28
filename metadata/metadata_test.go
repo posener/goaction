@@ -7,9 +7,10 @@ import (
 
 	"github.com/goccy/go-yaml"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
-func TestNew_flags(t *testing.T) {
+func TestNew(t *testing.T) {
 	t.Parallel()
 
 	content := `
@@ -94,4 +95,55 @@ func main() {
 		t.Fatal(err)
 	}
 	assert.Equal(t, got, want)
+}
+
+func TestMarshal(t *testing.T) {
+	m := Metadata{
+		Name: "name",
+		Desc: "description",
+		Inputs: yaml.MapSlice{
+			{"in2", Input{tp: "tp2", Default: 1, Desc: "description 2"}},
+			{"in1", Input{tp: "tp1", Default: "string", Desc: "description 1"}},
+		},
+		Runs: Runs{
+			Using: "using",
+			Image: "image",
+			Args:  []string{"arg1", "arg2"},
+			Env: yaml.MapSlice{
+				{"key2", "value2"},
+				{"key1", "value1"},
+			},
+		},
+	}
+
+	m.Branding.Color = "color"
+	m.Branding.Icon = "icon"
+
+	want := `name: name
+description: description
+inputs:
+  in2:
+    default: 1
+    description: description 2
+    required: false
+  in1:
+    default: string
+    description: description 1
+    required: false
+runs:
+  using: using
+  image: image
+  env:
+    key2: value2
+    key1: value1
+  args:
+  - arg1
+  - arg2
+branding:
+  icon: icon
+  color: color
+`
+	got, err := yaml.Marshal(m)
+	require.NoError(t, err)
+	assert.Equal(t, want, string(got))
 }
