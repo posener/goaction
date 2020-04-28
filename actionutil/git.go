@@ -57,7 +57,10 @@ func GitCommitPush(paths []string, message string) error {
 	for {
 		// Push the change.
 		err = git("push", "origin", "HEAD:"+branch).ToStdout()
-		if err != nil && retry > maxRetries {
+		if err == nil {
+			return nil
+		}
+		if retry > maxRetries {
 			return fmt.Errorf("push failed %d times: %s", maxRetries, err)
 		}
 		retry++
