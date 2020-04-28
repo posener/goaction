@@ -13,7 +13,7 @@ import (
 func TestNew(t *testing.T) {
 	t.Parallel()
 
-	content := `
+	code := `
 // Package inputs tests parsing of input calls.
 package inputs
 
@@ -85,16 +85,62 @@ func main() {
 		},
 	}
 
-	fset := token.NewFileSet()
-	f, err := parser.ParseFile(fset, "flags.go", content, parser.ParseComments)
-	if err != nil {
-		t.Fatal(err)
-	}
-	got, err := New(f)
+	got, err := parse(code)
 	if err != nil {
 		t.Fatal(err)
 	}
 	assert.Equal(t, got, want)
+}
+
+func TestNewRequired(t *testing.T) {
+	t.Parallel()
+
+	code := `
+package required
+
+import (
+	"flag"
+	"github.com/posener/goaction"
+)
+
+var (
+	// Test simple case
+	//goaction:required
+	_ = flag.String("simple", "", "simple")
+
+	// Test multiple definitions.
+	//goaction:required
+	_, _ = flag.String("multi1", "", "multi1"), flag.String("multi2", "", "multi2")
+
+	s string
+)
+
+// Test var definition.
+//goaction:required
+var _ = flag.String("var", "", "var")
+
+// Test var block.
+//goaction:required
+var (
+	_ = flag.String("block1", "", "block1")
+	_ = flag.String("block2", "", "block2")
+)
+`
+
+	var want = yaml.MapSlice{
+		{"simple", Input{tp: inputFlag, Desc: "\"simple\"", Required: true}},
+		{"multi1", Input{tp: inputFlag, Desc: "\"multi1\"", Required: true}},
+		{"multi2", Input{tp: inputFlag, Desc: "\"multi2\"", Required: true}},
+		{"var", Input{tp: inputFlag, Desc: "\"var\"", Required: true}},
+		{"block1", Input{tp: inputFlag, Desc: "\"block1\"", Required: true}},
+		{"block2", Input{tp: inputFlag, Desc: "\"block2\"", Required: true}},
+	}
+
+	got, err := parse(code)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, got.Inputs, want)
 }
 
 func TestMarshal(t *testing.T) {
@@ -146,4 +192,13 @@ branding:
 	got, err := yaml.Marshal(m)
 	require.NoError(t, err)
 	assert.Equal(t, want, string(got))
+}
+
+func parse(code string) (Metadata, error) {
+	fset := token.NewFileSet()
+	f, err := parser.ParseFile(fset, "main.go", code, parser.ParseComments)
+	if err != nil {
+		return Metadata{}, err
+	}
+	return New(f)
 }

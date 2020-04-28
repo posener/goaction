@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"go/ast"
 	"go/doc"
+	"go/token"
 	"log"
 	"strconv"
 
@@ -14,6 +15,8 @@ import (
 const (
 	inputFlag = "flag"
 	inputEnv  = "env"
+
+	requiredComment = "//goaction:required"
 )
 
 // Metadata represents the structure of Github actions metadata yaml file.
@@ -60,7 +63,7 @@ func New(f *ast.File) (Metadata, error) {
 		},
 	}
 
-	ast.Inspect(f, m.inspect)
+	ast.Inspect(f, func(n ast.Node) bool { return m.inspect(n, false) })
 	if m.err != nil {
 		return m, m.err
 	}
@@ -78,102 +81,102 @@ func New(f *ast.File) (Metadata, error) {
 	return m, nil
 }
 
-func (m *Metadata) inspect(n ast.Node) bool {
-	call, ok := n.(*ast.CallExpr)
-	if !ok {
-		return true
+func (m *Metadata) inspect(n ast.Node, required bool) bool {
+	switch v := n.(type) {
+	case *ast.GenDecl:
+		// Decleration definition, catches "var ( ... )" segments.
+		m.inspectDecl(v, required)
+		return false
+	case *ast.ValueSpec:
+		// Value definition, catches "v := package.Func(...)"" calls."
+		m.inspectValue(v, required)
+		return false // Covered all inspections, no need to inspect down this node.
+	case *ast.CallExpr:
+		m.inspectCall(v, required)
+		return true // Continue inspecting, maybe there is another call in this call.
 	}
-
-	selector, ok := call.Fun.(*ast.SelectorExpr)
-	if !ok {
-		return true
-	}
-
-	cnt := true
-
-	defer func() {
-		if r := recover(); r != nil {
-			cnt = false
-			err, ok := r.(error)
-			if ok {
-				m.err = err
-			} else {
-				panic(r)
-			}
-		}
-	}()
-
-	switch name(selector.X) {
-	case "flag":
-		return m.inspectFlagCall(selector, call)
-	case "os":
-		return m.inspectOSCall(selector, call)
-	case "goaction":
-		return m.inspectGoactionCall(selector, call)
-	}
-	return cnt
-}
-
-func (m *Metadata) inspectFlagCall(selector *ast.SelectorExpr, call *ast.CallExpr) bool {
-	var in Input
-	var inName string
-	switch name(selector.Sel) {
-	case "String":
-		inName = unqoute(stringValue(call.Args[0]))
-		in = stringFlag(call.Args[1], call.Args[2])
-	case "StringVar":
-		inName = unqoute(stringValue(call.Args[1]))
-		in = stringFlag(call.Args[2], call.Args[3])
-	case "Int":
-		inName = unqoute(stringValue(call.Args[0]))
-		in = intFlag(call.Args[1], call.Args[2])
-	case "IntVar":
-		inName = unqoute(stringValue(call.Args[1]))
-		in = intFlag(call.Args[2], call.Args[3])
-	case "Bool":
-		inName = unqoute(stringValue(call.Args[0]))
-		in = boolFlag(call.Args[1], call.Args[2])
-	case "BoolVar":
-		inName = unqoute(stringValue(call.Args[1]))
-		in = boolFlag(call.Args[2], call.Args[3])
-	default:
-		return true
-	}
-	in.tp = inputFlag
-	m.AddInput(inName, in)
 	return true
 }
 
-func (m *Metadata) inspectOSCall(selector *ast.SelectorExpr, call *ast.CallExpr) bool {
+func (m *Metadata) inspectDecl(decl *ast.GenDecl, required bool) {
+	// Decleration can be IMPORT, CONST, TYPE, VAR. We are only interested in VAR.
+	if decl.Tok != token.VAR {
+		return
+	}
+	required = required || isRequried(decl.Doc)
+	for _, spec := range decl.Specs {
+		m.inspect(spec, required)
+	}
+}
+
+func (m *Metadata) inspectValue(value *ast.ValueSpec, required bool) {
+	required = required || isRequried(value.Doc)
+	for _, v := range value.Values {
+		call, ok := v.(*ast.CallExpr)
+		if !ok {
+			continue
+		}
+		m.inspectCall(call, required)
+	}
+}
+
+func isRequried(doc *ast.CommentGroup) bool {
+	if doc == nil {
+		return false
+	}
+	for _, comment := range doc.List {
+		if comment.Text == requiredComment {
+			return true
+		}
+	}
+	return false
+}
+
+func (m *Metadata) inspectCall(call *ast.CallExpr, required bool) {
+	selector, ok := call.Fun.(*ast.SelectorExpr)
+	if !ok {
+		return
+	}
+
+	// Full call name, of the form: 'package.Function'.
+	fullName := name(selector.X) + "." + name(selector.Sel)
+
 	var in Input
 	var inName string
-	switch name(selector.Sel) {
-	case "Getenv":
+
+	switch fullName {
+	default:
+		return
+	case "flag.String":
+		inName = unqoute(stringValue(call.Args[0]))
+		in = stringFlag(call.Args[1], call.Args[2])
+	case "flag.StringVar":
+		inName = unqoute(stringValue(call.Args[1]))
+		in = stringFlag(call.Args[2], call.Args[3])
+	case "flag.Int":
+		inName = unqoute(stringValue(call.Args[0]))
+		in = intFlag(call.Args[1], call.Args[2])
+	case "flag.IntVar":
+		inName = unqoute(stringValue(call.Args[1]))
+		in = intFlag(call.Args[2], call.Args[3])
+	case "flag.Bool":
+		inName = unqoute(stringValue(call.Args[0]))
+		in = boolFlag(call.Args[1], call.Args[2])
+	case "flag.BoolVar":
+		inName = unqoute(stringValue(call.Args[1]))
+		in = boolFlag(call.Args[2], call.Args[3])
+	case "goaction.Getenv":
+		inName = unqoute(stringValue(call.Args[0]))
+		in = stringFlag(call.Args[1], call.Args[2])
+		in.tp = inputEnv
+	case "os.Getenv":
 		// Github is passing all environment variables with "INPUT_" prefix. Therefore it is
 		// required to use the goaction environment wrapper.
 		key := stringValue(call.Args[0])
 		log.Fatalf("Found `os.Getenv(%s)`, use `goaction.Getenv(%s)` instead", key, key)
-	default:
-		return true
 	}
-	in.tp = inputEnv
+	in.Required = required
 	m.AddInput(inName, in)
-	return true
-}
-
-func (m *Metadata) inspectGoactionCall(selector *ast.SelectorExpr, call *ast.CallExpr) bool {
-	var in Input
-	var inName string
-	switch name(selector.Sel) {
-	case "Getenv":
-		inName = unqoute(stringValue(call.Args[0]))
-		in = stringFlag(call.Args[1], call.Args[2])
-	default:
-		return true
-	}
-	in.tp = inputEnv
-	m.AddInput(inName, in)
-	return true
 }
 
 func calcArgs(inputs yaml.MapSlice /* map[string]Input */) ([]string, error) {
@@ -208,6 +211,7 @@ func stringFlag(def ast.Expr, desc ast.Expr) Input {
 		in.Default = v
 	}
 	in.Desc = stringValue(desc)
+	in.tp = inputFlag
 	return in
 }
 
@@ -221,6 +225,7 @@ func intFlag(def ast.Expr, desc ast.Expr) Input {
 		}
 	}
 	in.Desc = stringValue(desc)
+	in.tp = inputFlag
 	return in
 }
 
@@ -234,6 +239,7 @@ func boolFlag(def ast.Expr, desc ast.Expr) Input {
 		}
 	}
 	in.Desc = stringValue(desc)
+	in.tp = inputFlag
 	return in
 }
 
