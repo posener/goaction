@@ -25,8 +25,8 @@ var (
 	path  = flag.String("path", "", "Path to main Go file, this file should contain all defined flags and environment variables.")
 	name  = flag.String("name", "", "Override action name, the default name is the package name.")
 	desc  = flag.String("desc", "", "Override action description, the default description is the package synopsis.")
-	icon  = flag.String("icon", "", "Set branding icon.")
-	color = flag.String("color", "", "Set branding color.")
+	icon  = flag.String("icon", "", "Set branding icon. Choose from https://feathericons.com")
+	color = flag.String("color", "", "Set branding color. Can be one of: white, yellow, blue, green, orange, red, purple or gray-dark")
 
 	email       = goaction.Getenv("email", "posener@gmail.com", "Email for commit message")
 	githubToken = goaction.Getenv("github-token", "", "Github token for PR comments. Optional.")
@@ -95,11 +95,6 @@ func main() {
 
 	log.Printf("Diff:\n\n%s\n\n", diff)
 
-	if !goaction.CI {
-		log.Println("Skipping commit stage.")
-		os.Exit(0)
-	}
-
 	// Runs only in Github CI mode.
 
 	err = actionutil.GitConfig("goaction", email)
@@ -109,11 +104,15 @@ func main() {
 
 	switch {
 	case goaction.IsPush():
+		if !goaction.CI {
+			log.Println("Skipping commit stage.")
+			break
+		}
 		push()
 	case goaction.IsPR():
 		pr(diff)
 	default:
-		log.Fatalf("unexpected action mode.")
+		log.Println("unsupported action mode.")
 	}
 }
 
@@ -150,7 +149,10 @@ func pr(diff string) {
 		return
 	}
 
-	body := "[Goaction](https://github.com/posener/goaction) will apply the following deff when PR is pushed.\n\n" + diff
+	body := "[Goaction](https://github.com/posener/goaction) will apply the following changes after PR is merged.\n\n" + diff
+	if diff == "" {
+		body = "[Goaction](https://github.com/posener/goaction) detected no required changes to Github action files."
+	}
 
 	ctx := context.Background()
 	err := actionutil.PRComment(ctx, githubToken, "goaction", body)
