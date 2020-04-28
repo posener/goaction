@@ -1,34 +1,37 @@
 /*
 Package goaction enables writing Github Actions in Go.
 
-The idea is - write a Go script, and use it as Github action. This script can be seemlesly run using
-both `go run` command line, or by Github action! This project will create all the required files
-(`Dockerfile`, `action.yml`) generated specifically for your script. Your script can also use this
-library in order to get workflow information.
+The idea is - write a Go script one that you could also run with `go run`, and use it as Github
+action. This project will create all the required files generated specifically for your script. Your
+script can also use this library in order to get workflow information.
 
-The things that you are required to do:
+Required steps
 
-- [x] In a github repository, have a main Go file that contains your script logic.
+- [x] Create a script in Go.
 
 - [x] Add `goaction` configuration in `.github/workflows/goaction.yml`.
 
-How to write the main Go file
+- [x] Push the project to Github
 
-The main Go file, is a single file, and can be located anywhere in the repository. It does **not**
-need to contain all the action logic. It **does** need to contain all the inputs definitions.
+- [x] Tell me about it, I'll link it below.
 
-Input definitions, as explained, should only be defined in the main Go file can be set using `flag`
-package to get inputs from command line flags, or by `goreadme.Getenv` to get inputs from
-environment variables.
+Writing Action Go Script
 
-> The inputs define the API of the program. `goaction` automatically detect these calls and creates
-> the `action.yml` file from them.
+Create a Go project. Currently it must be using Go modules, and compilable with Go 1.14. The action
+script is simply a main package located somewhere in this project.
 
-Goaction also provides a library that exposes all Github action envirnment which easy-to-use
-variabls / functions. See the documentation for more information.
+One limitation is that this main package should contain a main file, and this file must contain all
+the required inputs for this binary. This inputs are defined with the standard `flag` package for
+command line arguments, or by `goaction.Getenv` for environment variables.
 
-Code segments which we want to run only in Github action, and not when invoking the script with as
-a command line tool, should be protected by `if goaction.CI { ... }`.
+> These inputs define the API of the program. `goaction` automatically detect them and creates the
+> `action.yml` file from them.
+
+Additionally, goaction also provides a library that exposes all Github action envirnment in an
+easy-to-use API. See the documentation for more information.
+
+Code segments which should run only in Github action (called "CI mode"), and not when the main
+package runs as a command line tool, should be protected by `if goaction.CI { ... }`.
 
 Goaction Configuration
 
@@ -43,33 +46,41 @@ When a new commit is pushed, goreadme makes sure that the Github action files ar
 Add the following content to `.github/workflows/goaction.yml`
 
 	on:
-		pull_request:
-		branches: [master]
-		push:
-		branches: [master]
+	  pull_request:
+	    branches: [master]
+	  push:
+	    branches: [master]
 	jobs:
-		goaction:
-		runs-on: ubuntu-latest
-		steps:
-		- name: Check out repository
-			uses: actions/checkout@v2
-		- name: Update action files
-			uses: posener/goaction@v1
-			with:
-			path: <path to main file>.
-			# Optional: required only for commenting on PRs.
-			github-token: '${{ secrets.GITHUB_TOKEN }}'
+	  goaction:
+	  runs-on: ubuntu-latest
+	  steps:
+	  - name: Check out repository
+	    uses: actions/checkout@v2
+	  - name: Update action files
+	    uses: posener/goaction@v1
+	    with:
+	      path: <path to main file>.
+	      # Optional: required only for commenting on PRs.
+		  github-token: '${{ secrets.GITHUB_TOKEN }}'
+		  # Other falgs... see ./action.yml
 
-Goaction artifacts
+Goaction Artifacts
 
-action.yml: Github uses this file to infer that this repository is a github action, and how to run
-it.
+./action.yml: A "metadata" file for Github actions. If this file exists, the repository is
+considered as Github action, and the file contains information that instructs how to invoke this
+action. See https://help.github.com/en/actions/building-actions/metadata-syntax-for-github-actions.
+for more info.
 
-Dockerfile: Github action uses this file in order to create a container image to the action. It can
-also be built and run manually:
+./Dockerfile: A file that contains instructions how to build a container, that is used for Github
+actions. Github action uses this file in order to create a container image to the action. The
+container can also be built and tested manually:
 
 	$ docker build -t my-action .
 	$ docker run --rm my-action
+
+Using Goaction
+
+* [posener/goreadme](http://github.com/posener/goreadme)
 
 */
 package goaction
@@ -84,7 +95,15 @@ import (
 // See https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables#default-environment-variables
 var (
 	// CI is set to true when running under github action
-	CI            = os.Getenv("CI") == "true"
+	//
+	// This variable can be used to protect code segments which should only run in Github action
+	// mode and not in command line mode:
+	//
+	//  if goaction.CI {
+	// 		// Code that should run only in Github action mode.
+	// 	}
+	CI = os.Getenv("CI") == "true"
+
 	Home          = os.Getenv("HOME")
 	Workflow      = os.Getenv("GITHUB_WORKFLOW")
 	RunID         = os.Getenv("GITHUB_RUN_ID")
