@@ -1,8 +1,8 @@
 # goaction
 
-[![Build Status](https://travis-ci.org/posener/goaction.svg?branch=master)](https://travis-ci.org/posener/goaction)
-[![codecov](https://codecov.io/gh/posener/goaction/branch/master/graph/badge.svg)](https://codecov.io/gh/posener/goaction)
-[![GoDoc](https://img.shields.io/badge/pkg.go.dev-doc-blue)](http://pkg.go.dev/github.com/posener/goaction)
+[![Build Status](https://travis-ci.org/..svg?branch=master)](https://travis-ci.org/.)
+[![codecov](https://codecov.io/gh/./branch/master/graph/badge.svg)](https://codecov.io/gh/.)
+[![GoDoc](https://img.shields.io/badge/pkg.go.dev-doc-blue)](http://pkg.go.dev/.)
 
 Package goaction enables writing Github Actions in Go.
 
