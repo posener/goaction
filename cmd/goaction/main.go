@@ -22,7 +22,7 @@ import (
 )
 
 var (
-	path  = flag.String("path", "", "Path to main package.")
+	path  = flag.String("path", "", "Path to main Go file, this file should contain all defined flags and environment variables.")
 	name  = flag.String("name", "", "Override action name, the default name is the package name.")
 	desc  = flag.String("desc", "", "Override action description, the default description is the package synopsis.")
 	icon  = flag.String("icon", "", "Set branding icon.")
@@ -33,7 +33,6 @@ var (
 )
 
 const (
-	goMain     = "main.go"
 	action     = "action.yml"
 	dockerfile = "Dockerfile"
 )
@@ -47,7 +46,7 @@ func main() {
 
 	// Load go code.
 	fset := token.NewFileSet()
-	f, err := parser.ParseFile(fset, filepath.Join(*path, goMain), nil, parser.ParseComments)
+	f, err := parser.ParseFile(fset, *path, nil, parser.ParseComments)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -79,14 +78,8 @@ func main() {
 
 	// Create dockerfile
 	log.Printf("Writing %s\n", dockerfile)
-	*path, err = filepath.Rel(".", *path)
-	if err != nil {
-		log.Fatal(err)
-	}
-	if !strings.HasPrefix(*path, "./") {
-		*path = "./" + *path
-	}
-	data := tmplData{Path: *path}
+	dir, err := pathRelDir(*path)
+	data := tmplData{Dir: dir}
 	err = script.Writer("template", func(w io.Writer) error { return tmpl.Execute(w, data) }).
 		ToFile(dockerfile)
 	if err != nil {
@@ -166,8 +159,38 @@ func pr(diff string) {
 	}
 }
 
+// pathRelDir returns the containing directory of a given path in a relative form, relative to the
+// working directory prefixed with "./"
+func pathRelDir(path string) (string, error) {
+	path, err := filepath.Abs(path)
+	if err != nil {
+		return "", err
+	}
+
+	path = filepath.Dir(path)
+
+	wd, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+
+	path, err = filepath.Rel(wd, path)
+	if err != nil {
+		return "", err
+	}
+	// If Rel returned ".", fix it to empty string which will eventually mutate to "./".
+	if path == "." {
+		path = ""
+	}
+	// Add a "./" prefix.
+	if !strings.HasPrefix(path, "./") {
+		path = "./" + path
+	}
+	return path, nil
+}
+
 type tmplData struct {
-	Path string
+	Dir string
 }
 
 var tmpl = template.Must(template.New("dockerfile").Parse(`
@@ -176,7 +199,7 @@ RUN apk add git
 
 COPY . /home/src
 WORKDIR /home/src
-RUN go build -o /bin/action {{ .Path }}
+RUN go build -o /bin/action {{ .Dir }}
 
 FROM alpine:3.11
 RUN apk add git

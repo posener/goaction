@@ -21,7 +21,7 @@ inputs:
     description: Override action name, the default name is the package name.
     required: false
   path:
-    description: Path to main package.
+    description: Path to main Go file, this file should contain all defined flags and environment variables.
     required: false
 runs:
   using: docker

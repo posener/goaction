@@ -12,5 +12,5 @@ jobs:
       - name: Update action files
         uses: ./
         with:
-          path: cmd/goaction
+          path: cmd/goaction/main.go
           github-token: '${{ secrets.GITHUB_TOKEN }}'

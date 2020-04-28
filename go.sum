@@ -32,8 +32,6 @@ github.com/mattn/go-isatty v0.0.10/go.mod h1:qgIWMr58cqv1PHHyhnkY9lrL7etaEgOFcME
 github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
-github.com/posener/script v1.1.3 h1:QlWlNd6pOsF9d9+tqdkw8cZ2rWcgv8IOXskt1o66nKA=
-github.com/posener/script v1.1.3/go.mod h1:Rg3ijooqulo05aGLyGsHoLmIOUzHUVK19WVgrYBPU/E=
 github.com/posener/script v1.1.4 h1:tfyEeQirqVdzm7+/wk4jsoYe1OcKPnxrhZ9ZS8kNBm0=
 github.com/posener/script v1.1.4/go.mod h1:Rg3ijooqulo05aGLyGsHoLmIOUzHUVK19WVgrYBPU/E=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
