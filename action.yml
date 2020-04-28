@@ -35,3 +35,6 @@ runs:
   - "-desc=${{ inputs.desc }}"
   - "-icon=${{ inputs.icon }}"
   - "-color=${{ inputs.color }}"
+branding:
+  icon: activity
+  color: blue
