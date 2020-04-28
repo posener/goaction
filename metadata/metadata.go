@@ -5,8 +5,9 @@ import (
 	"go/ast"
 	"go/doc"
 	"log"
-	"sort"
 	"strconv"
+
+	"github.com/goccy/go-yaml"
 )
 
 const (
@@ -18,8 +19,8 @@ const (
 // See https://help.github.com/en/actions/building-actions/metadata-syntax-for-github-actions.
 type Metadata struct {
 	Name     string
-	Desc     string `yaml:"description,omitempty"`
-	Inputs   map[string]Input
+	Desc     string        `yaml:"description,omitempty"`
+	Inputs   yaml.MapSlice `yaml:",omitempty"` // map[string]Input
 	Runs     Runs
 	Branding struct {
 		Icon  string `yaml:",omitempty"`
@@ -27,6 +28,10 @@ type Metadata struct {
 	} `yaml:",omitempty"`
 
 	err error
+}
+
+func (m *Metadata) AddInput(name string, in Input) {
+	m.Inputs = append(m.Inputs, yaml.MapItem{name, in})
 }
 
 type Input struct {
@@ -40,15 +45,14 @@ type Input struct {
 type Runs struct {
 	Using string
 	Image string
-	Env   map[string]string `yaml:",omitempty"`
-	Args  []string          `yaml:",omitempty"`
+	Env   yaml.MapSlice `yaml:",omitempty"` // map[string]string
+	Args  []string      `yaml:",omitempty"`
 }
 
 func New(f *ast.File) (Metadata, error) {
 	m := Metadata{
-		Name:   f.Name.Name,
-		Desc:   doc.Synopsis(f.Doc.Text()),
-		Inputs: make(map[string]Input),
+		Name: f.Name.Name,
+		Desc: doc.Synopsis(f.Doc.Text()),
 		Runs: Runs{
 			Using: "docker",
 			Image: "Dockerfile",
@@ -135,7 +139,7 @@ func (m *Metadata) inspectFlagCall(selector *ast.SelectorExpr, call *ast.CallExp
 		return true
 	}
 	in.tp = inputFlag
-	m.Inputs[inName] = in
+	m.AddInput(inName, in)
 	return true
 }
 
@@ -152,7 +156,7 @@ func (m *Metadata) inspectOSCall(selector *ast.SelectorExpr, call *ast.CallExpr)
 		return true
 	}
 	in.tp = inputEnv
-	m.Inputs[inName] = in
+	m.AddInput(inName, in)
 	return true
 }
 
@@ -167,14 +171,16 @@ func (m *Metadata) inspectGoactionCall(selector *ast.SelectorExpr, call *ast.Cal
 		return true
 	}
 	in.tp = inputEnv
-	m.Inputs[inName] = in
+	m.AddInput(inName, in)
 	return true
 }
 
-func calcArgs(inputs map[string]Input) ([]string, error) {
+func calcArgs(inputs yaml.MapSlice /* map[string]Input */) ([]string, error) {
 	var args []string
-	for _, name := range sortedNames(inputs) {
-		if inputs[name].tp != inputFlag {
+	for _, mapItem := range inputs {
+		name := mapItem.Key.(string)
+		input := mapItem.Value.(Input)
+		if input.tp != inputFlag {
 			continue
 		}
 		args = append(args, fmt.Sprintf("\"-%s=${{ inputs.%s }}\"", name, name))
@@ -182,13 +188,15 @@ func calcArgs(inputs map[string]Input) ([]string, error) {
 	return args, nil
 }
 
-func calcEnv(inputs map[string]Input) (map[string]string, error) {
-	envs := map[string]string{}
-	for _, name := range sortedNames(inputs) {
-		if inputs[name].tp != inputEnv {
+func calcEnv(inputs yaml.MapSlice /* map[string]Input */) (yaml.MapSlice /* map[string]string */, error) {
+	var envs yaml.MapSlice
+	for _, mapItem := range inputs {
+		name := mapItem.Key.(string)
+		input := mapItem.Value.(Input)
+		if input.tp != inputEnv {
 			continue
 		}
-		envs[name] = fmt.Sprintf("\"${{ inputs.%s }}\"", name)
+		envs = append(envs, yaml.MapItem{name, fmt.Sprintf("\"${{ inputs.%s }}\"", name)})
 	}
 	return envs, nil
 }
@@ -256,13 +264,4 @@ func stringValue(e ast.Expr) string {
 	default:
 		panic(fmt.Errorf("unsupported expression: %T", e))
 	}
-}
-
-func sortedNames(ins map[string]Input) []string {
-	names := make([]string, len(ins))
-	for name := range ins {
-		names = append(names, name)
-	}
-	sort.Strings(names)
-	return names
 }
