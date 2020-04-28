@@ -14,6 +14,5 @@ jobs:
           with:
             recursive: true
             badge-travisci: true
-            badge-codecov: true
             badge-godoc: true
             github-token: '${{ secrets.GITHUB_TOKEN }}'
