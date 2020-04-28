@@ -4,9 +4,7 @@
 [![codecov](https://codecov.io/gh/posener/goaction/branch/master/graph/badge.svg)](https://codecov.io/gh/posener/goaction)
 [![GoDoc](https://img.shields.io/badge/pkg.go.dev-doc-blue)](http://pkg.go.dev/github.com/posener/goaction)
 
-```go
 Package goaction enables writing Github Actions in Go.
-```
 
 The idea is - write a Go script, and use it as Github action. This script can be seemlesly run using
 both `go run` command line, or by Github action! This project will create all the required files
