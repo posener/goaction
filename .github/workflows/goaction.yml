@@ -12,6 +12,8 @@ jobs:
       - name: Update action files
         uses: ./
         with:
+          name: posener/goaction
+          description: Github actions for Go code
           path: cmd/goaction/main.go
           github-token: '${{ secrets.GITHUB_TOKEN }}'
           icon: activity
