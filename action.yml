@@ -1,11 +1,20 @@
 name: main
 description: Creates action files for Go code
 inputs:
-  color:
-    description: Set branding color. Can be one of: white, yellow, blue, green, orange, red, purple or gray-dark
+  path:
+    description: Path to main Go file, this file should contain all defined flags and environment variables.
+    required: false
+  name:
+    description: Override action name, the default name is the package name.
     required: false
   desc:
     description: Override action description, the default description is the package synopsis.
+    required: false
+  icon:
+    description: Set branding icon. Choose from https://feathericons.com
+    required: false
+  color:
+    description: Set branding color. Can be one of: white, yellow, blue, green, orange, red, purple or gray-dark
     required: false
   email:
     default: posener@gmail.com
@@ -14,15 +23,6 @@ inputs:
   github-token:
     description: Github token for PR comments. Optional.
     required: false
-  icon:
-    description: Set branding icon. Choose from https://feathericons.com
-    required: false
-  name:
-    description: Override action name, the default name is the package name.
-    required: false
-  path:
-    description: Path to main Go file, this file should contain all defined flags and environment variables.
-    required: false
 runs:
   using: docker
   image: Dockerfile
@@ -30,11 +30,8 @@ runs:
     email: "${{ inputs.email }}"
     github-token: "${{ inputs.github-token }}"
   args:
-  - "-color=${{ inputs.color }}"
+  - "-path=${{ inputs.path }}"
+  - "-name=${{ inputs.name }}"
   - "-desc=${{ inputs.desc }}"
   - "-icon=${{ inputs.icon }}"
-  - "-name=${{ inputs.name }}"
-  - "-path=${{ inputs.path }}"
-branding:
-  icon: activity
-  color: blue
+  - "-color=${{ inputs.color }}"
