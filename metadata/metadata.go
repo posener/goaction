@@ -52,7 +52,7 @@ type Runs struct {
 func New(f *ast.File) (Metadata, error) {
 	m := Metadata{
 		Name: f.Name.Name,
-		Desc: doc.Synopsis(f.Doc.Text()),
+		Desc: strconv.Quote(doc.Synopsis(f.Doc.Text())),
 		Runs: Runs{
 			Using: "docker",
 			Image: "Dockerfile",
@@ -206,7 +206,7 @@ func stringFlag(def ast.Expr, desc ast.Expr) Input {
 	if v := unqoute(stringValue(def)); v != "" {
 		in.Default = v
 	}
-	in.Desc = unqoute(stringValue(desc))
+	in.Desc = stringValue(desc)
 	return in
 }
 
@@ -219,7 +219,7 @@ func intFlag(def ast.Expr, desc ast.Expr) Input {
 			panic(err)
 		}
 	}
-	in.Desc = unqoute(stringValue(desc))
+	in.Desc = stringValue(desc)
 	return in
 }
 
@@ -232,7 +232,7 @@ func boolFlag(def ast.Expr, desc ast.Expr) Input {
 			panic(err)
 		}
 	}
-	in.Desc = unqoute(stringValue(desc))
+	in.Desc = stringValue(desc)
 	return in
 }
 

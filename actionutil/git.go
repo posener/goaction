@@ -23,6 +23,7 @@ func GitConfig(name, email string) error {
 func GitDiff(path string) (string, error) {
 	// Add files to git, in case it does not exists
 	err := git("add", path).ToStdout()
+	defer func() { git("reset", path).ToStdout() }()
 	if err != nil {
 		return "", fmt.Errorf("git add for %s: %s", path, err)
 	}

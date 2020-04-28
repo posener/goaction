@@ -25,7 +25,7 @@ var (
 	path  = flag.String("path", "", "Path to main Go file, this file should contain all defined flags and environment variables.")
 	name  = flag.String("name", "", "Override action name, the default name is the package name.")
 	desc  = flag.String("desc", "", "Override action description, the default description is the package synopsis.")
-	icon  = flag.String("icon", "", "Set branding icon. Choose from https://feathericons.com")
+	icon  = flag.String("icon", "", "Set branding icon. Choose from https://feathericons.com.")
 	color = flag.String("color", "", "Set branding color. Can be one of: white, yellow, blue, green, orange, red, purple or gray-dark")
 
 	email       = goaction.Getenv("email", "posener@gmail.com", "Email for commit message")

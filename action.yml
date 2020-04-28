@@ -1,27 +1,27 @@
 name: main
-description: Creates action files for Go code
+description: "Creates action files for Go code"
 inputs:
   path:
-    description: Path to main Go file, this file should contain all defined flags and environment variables.
+    description: "Path to main Go file, this file should contain all defined flags and environment variables."
     required: false
   name:
-    description: Override action name, the default name is the package name.
+    description: "Override action name, the default name is the package name."
     required: false
   desc:
-    description: Override action description, the default description is the package synopsis.
+    description: "Override action description, the default description is the package synopsis."
     required: false
   icon:
-    description: Set branding icon. Choose from https://feathericons.com
+    description: "Set branding icon. Choose from https://feathericons.com."
     required: false
   color:
-    description: Set branding color. Can be one of: white, yellow, blue, green, orange, red, purple or gray-dark
+    description: "Set branding color. Can be one of: white, yellow, blue, green, orange, red, purple or gray-dark"
     required: false
   email:
     default: posener@gmail.com
-    description: Email for commit message
+    description: "Email for commit message"
     required: false
   github-token:
-    description: Github token for PR comments. Optional.
+    description: "Github token for PR comments. Optional."
     required: false
 runs:
   using: docker
