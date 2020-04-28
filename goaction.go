@@ -8,11 +8,11 @@ library in order to get workflow information.
 
 The things that you are required to do:
 
-1. In a github repository, have a main Go file that contains your script logic.
+- [x] In a github repository, have a main Go file that contains your script logic.
 
-2. Add `goaction` configuration in `.github/workflows/goaction.yml`.
+- [x] Add `goaction` configuration in `.github/workflows/goaction.yml`.
 
-1. How to write the main Go file
+How to write the main Go file
 
 The main Go file, is a single file, and can be located anywhere in the repository. It does **not**
 need to contain all the action logic. It **does** need to contain all the inputs definitions.
@@ -30,7 +30,7 @@ variabls / functions. See the documentation for more information.
 Code segments which we want to run only in Github action, and not when invoking the script with as
 a command line tool, should be protected by `if goaction.CI { ... }`.
 
-2. `goaction` configuration
+Goaction Configuration
 
 In order to convert the repository to a Github action, goaction command line should run on the main
 Go file. This command can run manually (by ./cmd/goaction) but luckly `goaction` also comes as a

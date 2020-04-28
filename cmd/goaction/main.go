@@ -17,7 +17,7 @@ import (
 	"github.com/goccy/go-yaml"
 	"github.com/posener/goaction"
 	"github.com/posener/goaction/actionutil"
-	"github.com/posener/goaction/metadata"
+	"github.com/posener/goaction/internal/metadata"
 	"github.com/posener/script"
 )
 

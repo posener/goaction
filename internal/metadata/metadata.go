@@ -1,3 +1,4 @@
+// Package metadata loads main go file to a datastructure that describes Github action metadata.
 package metadata
 
 import (
