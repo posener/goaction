@@ -143,6 +143,19 @@ var (
 	assert.Equal(t, got.Inputs, want)
 }
 
+func TestOsGetenvFailure(t *testing.T) {
+	t.Parallel()
+
+	code := `
+package required
+import "os"
+var env = os.Getenv("env")
+`
+
+	_, err := parse(code)
+	assert.Error(t, err)
+}
+
 func TestMarshal(t *testing.T) {
 	m := Metadata{
 		Name: "name",

@@ -6,7 +6,6 @@ import (
 	"go/ast"
 	"go/doc"
 	"go/token"
-	"log"
 	"strconv"
 
 	"github.com/goccy/go-yaml"
@@ -19,6 +18,8 @@ const (
 	requiredComment = "//goaction:required"
 )
 
+type parseError error
+
 // Metadata represents the structure of Github actions metadata yaml file.
 // See https://help.github.com/en/actions/building-actions/metadata-syntax-for-github-actions.
 type Metadata struct {
@@ -30,12 +31,6 @@ type Metadata struct {
 		Icon  string `yaml:",omitempty"`
 		Color string `yaml:",omitempty"`
 	} `yaml:",omitempty"`
-
-	err error
-}
-
-func (m *Metadata) AddInput(name string, in Input) {
-	m.Inputs = append(m.Inputs, yaml.MapItem{name, in})
 }
 
 type Input struct {
@@ -63,12 +58,24 @@ func New(f *ast.File) (Metadata, error) {
 		},
 	}
 
-	ast.Inspect(f, func(n ast.Node) bool { return m.inspect(n, false) })
-	if m.err != nil {
-		return m, m.err
-	}
-
 	var err error
+	ast.Inspect(f, func(n ast.Node) bool {
+		defer func() {
+			e := recover()
+			if e == nil {
+				return
+			}
+			var ok bool
+			err, ok = e.(parseError)
+			if !ok {
+				panic(e)
+			}
+		}()
+		return m.inspect(n, false)
+	})
+	if err != nil {
+		return m, err
+	}
 	m.Runs.Args, err = calcArgs(m.Inputs)
 	if err != nil {
 		return m, err
@@ -79,6 +86,10 @@ func New(f *ast.File) (Metadata, error) {
 	}
 
 	return m, nil
+}
+
+func (m *Metadata) AddInput(name string, in Input) {
+	m.Inputs = append(m.Inputs, yaml.MapItem{name, in})
 }
 
 func (m *Metadata) inspect(n ast.Node, required bool) bool {
@@ -173,7 +184,7 @@ func (m *Metadata) inspectCall(call *ast.CallExpr, required bool) {
 		// Github is passing all environment variables with "INPUT_" prefix. Therefore it is
 		// required to use the goaction environment wrapper.
 		key := stringValue(call.Args[0])
-		log.Fatalf("Found `os.Getenv(%s)`, use `goaction.Getenv(%s)` instead", key, key)
+		panic(parseError(fmt.Errorf("Found `os.Getenv(%s)`, use `goaction.Getenv(%s)` instead", key, key)))
 	}
 	in.Required = required
 	m.AddInput(inName, in)
@@ -221,7 +232,7 @@ func intFlag(def ast.Expr, desc ast.Expr) Input {
 		var err error
 		in.Default, err = strconv.Atoi(v)
 		if err != nil {
-			panic(err)
+			panic(parseError(err))
 		}
 	}
 	in.Desc = stringValue(desc)
@@ -235,7 +246,7 @@ func boolFlag(def ast.Expr, desc ast.Expr) Input {
 		var err error
 		in.Default, err = strconv.ParseBool(v)
 		if err != nil {
-			panic(err)
+			panic(parseError(err))
 		}
 	}
 	in.Desc = stringValue(desc)
@@ -267,8 +278,8 @@ func stringValue(e ast.Expr) string {
 		if x.Name == "true" || x.Name == "false" {
 			return x.Name
 		}
-		panic(fmt.Errorf("unsupported identifier: %v", x.Name))
+		panic(parseError(fmt.Errorf("unsupported identifier: %v", x.Name)))
 	default:
-		panic(fmt.Errorf("unsupported expression: %T", e))
+		panic(parseError(fmt.Errorf("unsupported expression: %T", e)))
 	}
 }
