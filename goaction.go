@@ -103,24 +103,77 @@ var (
 	// 		// Code that should run only in Github action mode.
 	// 	}
 	CI = os.Getenv("CI") == "true"
-
-	Home          = os.Getenv("HOME")
-	Workflow      = os.Getenv("GITHUB_WORKFLOW")
-	RunID         = os.Getenv("GITHUB_RUN_ID")
-	RunNum        = os.Getenv("GITHUB_RUN_NUMBER")
-	ActionID      = os.Getenv("GITHUB_ACTION")
-	Actor         = os.Getenv("GITHUB_ACTOR")
-	Repository    = os.Getenv("GITHUB_REPOSITORY")
-	Workspace     = os.Getenv("GITHUB_WORKSPACE")
-	SHA           = os.Getenv("GITHUB_SHA")
-	Ref           = os.Getenv("GITHUB_REF")
+	// The path to the GitHub home directory used to store user data. For example, /github/home.
+	Home = os.Getenv("HOME")
+	// The name of the workflow
+	Workflow = os.Getenv("GITHUB_WORKFLOW")
+	// 	A unique number for each run within a repository. This number does not change if you re-run
+	// the workflow run.
+	RunID = os.Getenv("GITHUB_RUN_ID")
+	// 	A unique number for each run of a particular workflow in a repository. This number begins at
+	// 1 for the workflow's first run, and increments with each new run. This number does not change
+	// if you re-run the workflow run.
+	RunNum = os.Getenv("GITHUB_RUN_NUMBER")
+	// The unique identifier (id) of the action.
+	ActionID = os.Getenv("GITHUB_ACTION")
+	// The name of the person or app that initiated the workflow. For example, octocat.
+	Actor = os.Getenv("GITHUB_ACTOR")
+	// The owner and repository name. For example, octocat/Hello-World.
+	Repository = os.Getenv("GITHUB_REPOSITORY")
+	// The name of the webhook event that triggered the workflow.
+	Event = EventType(os.Getenv("GITHUB_EVENT_NAME"))
+	// 	The GitHub workspace directory path. The workspace directory contains a subdirectory with a
+	// copy of your repository if your workflow uses the actions/checkout action. If you don't use
+	// the actions/checkout action, the directory will be empty. For example,
+	// /home/runner/work/my-repo-name/my-repo-name.
+	Workspace = os.Getenv("GITHUB_WORKSPACE")
+	// The commit SHA that triggered the workflow. For example,
+	// ffac537e6cbbf934b08745a378932722df287a53.
+	SHA = os.Getenv("GITHUB_SHA")
+	// The branch or tag ref that triggered the workflow. For example, refs/heads/feature-branch-1.
+	// If neither a branch or tag is available for the event type, the variable will not exist.
+	Ref = os.Getenv("GITHUB_REF")
+	//	Only set for forked repositories. The branch of the head repository.
 	ForkedHeadRef = os.Getenv("GITHUB_HEAD_REF")
+	// Only set for forked repositories. The branch of the base repository.
 	ForkedBaseRef = os.Getenv("GITHUB_BASE_REF")
 
-	eventName = os.Getenv("GITHUB_EVENT_NAME") // Use IsPush/IsPR instead.
 	eventPath = os.Getenv("GITHUB_EVENT_PATH")
 
 	repoParts = strings.Split(Repository, "/")
+)
+
+// A Github action triggering event.
+// See https://help.github.com/en/actions/reference/events-that-trigger-workflows.
+type EventType string
+
+// All Github action event types.
+const (
+	EventCheckRun                 EventType = "check_run"
+	EventCheckSuite                         = "check_suite"
+	EventCreate                             = "create"
+	EventDelete                             = "delete"
+	EventDeployment                         = "deployment"
+	EventFork                               = "fork"
+	EventGollum                             = "gollum"
+	EventIssueComment                       = "issue_comment"
+	EventIssues                             = "issues"
+	EventLabel                              = "label"
+	EventMilestone                          = "milestone"
+	EventPageBuild                          = "page_build"
+	EventProject                            = "project"
+	EventProjectCard                        = "project_card"
+	EventPublic                             = "public"
+	EventPullRequest                        = "pull_request"
+	EventPullRequestReview                  = "pull_request_review"
+	EventPullRequestReviewComment           = "pull_request_review_comment"
+	EventPush                               = "push"
+	EventRegistryPackage                    = "registry_package"
+	EventRelease                            = "release"
+	EventStatus                             = "status"
+	EventWatch                              = "watch"
+	EventSchedule                           = "schedule"
+	EventRepositoryDispatch                 = "repository_dispatch"
 )
 
 // Return environment variables from Github action. Providing a default value, usage string.
@@ -153,28 +206,18 @@ func Project() string {
 	return repoParts[1]
 }
 
-// IsPR returns true in push mode.
-func IsPush() bool {
-	return eventName == "push"
-}
-
-// IsPR returns true in pull request mode.
-func IsPR() bool {
-	return eventName == "pull_request"
-}
-
 // Branch returns the push branch for push flow or empty string for other flows.
 func Branch() string {
-	if IsPush() {
+	if Event == EventPush {
 		return strings.Split(Ref, "/")[2]
 	}
 	return ""
 
 }
 
-// PrNum returns pull request number for PR flow or 0 in other flows.
+// PrNum returns pull request number for PR flow or -1 in other flows.
 func PrNum() int {
-	if IsPR() {
+	if Event == EventPullRequest {
 		// Ref is in the form: "refs/pull/:prNumber/merge"
 		// See https://help.github.com/en/actions/reference/events-that-trigger-workflows#pull-request-event-pull_request
 		num, err := strconv.Atoi(strings.Split(Ref, "/")[2])
@@ -183,7 +226,7 @@ func PrNum() int {
 		}
 		return num
 	}
-	return 0
+	return -1
 }
 
 // IsForked return true if the action is running on a forked repository.

@@ -13,7 +13,7 @@ import (
 
 // PRComment adds a comment to the curerrent pull request. If the comment already exists
 // it updates the exiting comment with the new content.
-func PRComment(ctx context.Context, token string, actionID string, content string) error {
+func PRComment(ctx context.Context, token string, content string) error {
 	var (
 		own = goaction.Owner()
 		prj = goaction.Project()
@@ -21,7 +21,9 @@ func PRComment(ctx context.Context, token string, actionID string, content strin
 
 		// Hidden signature is added to the review comment body and is used in following runs to
 		// identify which comment to update.
-		hiddenSignature = fmt.Sprintf("<!-- comment by %s -->", actionID)
+		hiddenSignature = fmt.Sprintf(
+			"<!-- comment by %s (%s) -->",
+			goaction.Workflow, goaction.ActionID)
 	)
 
 	oauthClient := oauth2.NewClient(
@@ -50,10 +52,11 @@ func PRComment(ctx context.Context, token string, actionID string, content strin
 		_, _, err = gh.PullRequests.UpdateReview(ctx, own, prj, num, reviewID, commentBody)
 	} else {
 		log.Printf("Creating new review")
-		_, _, err = gh.PullRequests.CreateReview(ctx, own, prj, num, &github.PullRequestReviewRequest{
-			Body:  github.String(commentBody),
-			Event: github.String("COMMENT"),
-		})
+		_, _, err = gh.PullRequests.CreateReview(ctx, own, prj, num,
+			&github.PullRequestReviewRequest{
+				Body:  github.String(commentBody),
+				Event: github.String("COMMENT"),
+			})
 	}
 	return err
 }
