@@ -56,24 +56,24 @@ on:
     branches: [master]
 jobs:
   goaction:
-  runs-on: ubuntu-latest
-  steps:
-  - name: Check out repository
-    uses: actions/checkout@v2
-  - name: Update action files
-    uses: posener/goaction@v1
-    with:
-      path: <path to main file>.
-      # Optional: required only for commenting on PRs.
-	  github-token: '${{ secrets.GITHUB_TOKEN }}'
-	  # Other falgs... see [./action.yml](./action.yml)
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v2
+    - name: Update action files
+      uses: posener/goaction@v1
+      with:
+        path: <path to main file>.
+        # Optional: required only for commenting on PRs.
+        github-token: '${{ secrets.GITHUB_TOKEN }}'
+        # Other inputs... see [./action.yml](./action.yml)
 ```
 
 ## Goaction Artifacts
 
 [./action.yml](./action.yml): A "metadata" file for Github actions. If this file exists, the repository is
 considered as Github action, and the file contains information that instructs how to invoke this
-action. See [https://help.github.com/en/actions/building-actions/metadata-syntax-for-github-actions](https://help.github.com/en/actions/building-actions/metadata-syntax-for-github-actions).
+action. See [metadata syntax](https://help.github.com/en/actions/building-actions/metadata-syntax-for-github-actions).
 for more info.
 
 [./Dockerfile](./Dockerfile): A file that contains instructions how to build a container, that is used for Github
@@ -87,7 +87,7 @@ $ docker run --rm my-action
 
 ## Using Goaction
 
-* [posener/goreadme]([http://github.com/posener/goreadme](http://github.com/posener/goreadme))
+* [posener/goreadme](http://github.com/posener/goreadme)
 
 ## Sub Packages
 
