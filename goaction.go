@@ -143,39 +143,6 @@ var (
 	repoParts = strings.Split(Repository, "/")
 )
 
-// A Github action triggering event.
-// See https://help.github.com/en/actions/reference/events-that-trigger-workflows.
-type EventType string
-
-// All Github action event types.
-const (
-	EventCheckRun                 EventType = "check_run"
-	EventCheckSuite                         = "check_suite"
-	EventCreate                             = "create"
-	EventDelete                             = "delete"
-	EventDeployment                         = "deployment"
-	EventFork                               = "fork"
-	EventGollum                             = "gollum"
-	EventIssueComment                       = "issue_comment"
-	EventIssues                             = "issues"
-	EventLabel                              = "label"
-	EventMilestone                          = "milestone"
-	EventPageBuild                          = "page_build"
-	EventProject                            = "project"
-	EventProjectCard                        = "project_card"
-	EventPublic                             = "public"
-	EventPullRequest                        = "pull_request"
-	EventPullRequestReview                  = "pull_request_review"
-	EventPullRequestReviewComment           = "pull_request_review_comment"
-	EventPush                               = "push"
-	EventRegistryPackage                    = "registry_package"
-	EventRelease                            = "release"
-	EventStatus                             = "status"
-	EventWatch                              = "watch"
-	EventSchedule                           = "schedule"
-	EventRepositoryDispatch                 = "repository_dispatch"
-)
-
 // Return environment variables from Github action. Providing a default value, usage string.
 func Getenv(name string, value string, usage string) string {
 	// In Github action mode, update the environment variable name according to match the Github

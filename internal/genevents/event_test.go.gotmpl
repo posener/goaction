@@ -1,0 +1,25 @@
+package goaction
+// Code auto generated with `go run ./internal/genevents/main.go`. DO NOT EDIT
+
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
+
+{{ range . }}
+{{ if not ( skipInfoFunc .) }}
+func Test{{ funcName .}}(t *testing.T) {
+	if Event != Event{{ camel . }} {
+		t.Skipf("Only applicatble for '{{ pretty . }}'")
+	}
+	event, err := {{ funcName . }}()
+	assert.NoError(t, err)
+
+    var out bytes.Buffer
+	err = json.NewEncoder(&out).Encode(event)
+	require.NoError(t, err)
+	t.Log(out.String())
+}
+{{ end }}
+{{ end }}
