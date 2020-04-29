@@ -1,0 +1,38 @@
+on:
+- check_run
+- check_suite
+- create
+- delete
+- deployment
+- fork
+- gollum
+- issue_comment
+- issues
+- label
+- milestone
+- page_build
+- project
+- project_card
+- public
+- pull_request
+- pull_request_review
+- pull_request_review_comment
+- push
+- registry_package
+- release
+- status
+- watch
+- schedule
+- repository_dispatch
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install Go
+      uses: actions/setup-go@v1
+      with:
+          go-version: 1.14.x
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Test
+      run: go test -run "$TestGet" -v
