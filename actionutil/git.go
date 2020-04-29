@@ -18,8 +18,7 @@ func GitConfig(name, email string) error {
 	return git("config", "user.email", email).ToStdout()
 }
 
-// GitDiff returns diff of changes in a given file. The file will be staged after running this
-// command.
+// GitDiff returns diff of changes in a given file.
 func GitDiff(path string) (string, error) {
 	// Add files to git, in case it does not exists
 	err := git("add", path).ToStdout()
@@ -28,6 +27,31 @@ func GitDiff(path string) (string, error) {
 		return "", fmt.Errorf("git add for %s: %s", path, err)
 	}
 	return git("diff", "--staged", "--no-color", path).Tail(-5).ToString()
+}
+
+type Diff struct {
+	Path string
+	Diff string
+}
+
+// GitDiffAll returns diff of all changes in a given file.
+func GitDiffAll() ([]Diff, error) {
+	// Add files to git, in case it does not exists
+	err := git("add", ".").ToStdout()
+	defer func() { git("reset").ToStdout() }()
+	if err != nil {
+		return nil, fmt.Errorf("git add: %s", err)
+	}
+	var diffs []Diff
+	err = git("diff", "--staged", "--name-only").Iterate(func(path []byte) error {
+		diff, err := git("diff", "--staged", "--no-color", string(path)).Tail(-5).ToString()
+		if err != nil {
+			return err
+		}
+		diffs = append(diffs, Diff{Path: string(path), Diff: diff})
+		return nil
+	})
+	return diffs, err
 }
 
 // GitCommitPush commits and pushes a list of files.
