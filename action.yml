@@ -12,6 +12,9 @@ inputs:
   desc:
     description: "Override action description, the default description is the package synopsis."
     required: false
+  install:
+    description: "Comma separated list of requirements to 'apk add'."
+    required: false
   icon:
     description: "Set branding icon. Choose from https://feathericons.com."
     required: false
@@ -35,6 +38,7 @@ runs:
   - "-path=${{ inputs.path }}"
   - "-name=${{ inputs.name }}"
   - "-desc=${{ inputs.desc }}"
+  - "-install=${{ inputs.install }}"
   - "-icon=${{ inputs.icon }}"
   - "-color=${{ inputs.color }}"
 branding:
