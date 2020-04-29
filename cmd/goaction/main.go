@@ -23,11 +23,12 @@ import (
 
 var (
 	//goaction:required
-	path  = flag.String("path", "", "Path to main Go file, this file should contain all defined flags and environment variables.")
-	name  = flag.String("name", "", "Override action name, the default name is the package name.")
-	desc  = flag.String("desc", "", "Override action description, the default description is the package synopsis.")
-	icon  = flag.String("icon", "", "Set branding icon. Choose from https://feathericons.com.")
-	color = flag.String("color", "", "Set branding color. Can be one of: white, yellow, blue, green, orange, red, purple or gray-dark")
+	path    = flag.String("path", "", "Path to main Go file, this file should contain all defined flags and environment variables.")
+	name    = flag.String("name", "", "Override action name, the default name is the package name.")
+	desc    = flag.String("desc", "", "Override action description, the default description is the package synopsis.")
+	install = flag.String("install", "", "Comma separated list of requirements to 'apk add'.")
+	icon    = flag.String("icon", "", "Set branding icon. Choose from https://feathericons.com.")
+	color   = flag.String("color", "", "Set branding color. Can be one of: white, yellow, blue, green, orange, red, purple or gray-dark")
 
 	email       = goaction.Getenv("email", "posener@gmail.com", "Email for commit message")
 	githubToken = goaction.Getenv("github-token", "", "Github token for PR comments. Optional.")
@@ -80,7 +81,10 @@ func main() {
 	// Create dockerfile
 	log.Printf("Writing %s\n", dockerfile)
 	dir, err := pathRelDir(*path)
-	data := tmplData{Dir: dir}
+	data := tmplData{
+		Dir:     dir,
+		Install: strings.ReplaceAll(*install, ",", " "),
+	}
 	err = script.Writer("template", func(w io.Writer) error {
 		w.Write([]byte(autoComment))
 		return tmpl.Execute(w, data)
@@ -198,20 +202,17 @@ func pathRelDir(path string) (string, error) {
 }
 
 type tmplData struct {
-	Dir string
+	Dir     string
+	Install string
 }
 
 var tmpl = template.Must(template.New("dockerfile").Parse(`
 FROM golang:1.14.1-alpine3.11
-RUN apk add git
+RUN apk add git {{ .Install }}
 
 COPY . /home/src
 WORKDIR /home/src
 RUN go build -o /bin/action {{ .Dir }}
-
-FROM alpine:3.11
-RUN apk add git
-COPY --from=0 /bin/action /bin/action
 
 ENTRYPOINT [ "/bin/action" ]
 `))
