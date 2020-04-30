@@ -44,6 +44,10 @@ func main() {
 	log.SetFlags(log.Lshortfile)
 	flag.Parse()
 
+	if *path == "" {
+		log.Fatal("Missing required flag 'path'")
+	}
+
 	// Load go code.
 	fset := token.NewFileSet()
 	f, err := parser.ParseFile(fset, *path, nil, parser.ParseComments)
