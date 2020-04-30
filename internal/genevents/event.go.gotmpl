@@ -17,17 +17,17 @@ type EventType string
 
 // All Github action event types.
 const (
-{{ range . }}   Event{{ camel . }} EventType = "{{ . }}"
+{{ range . }}   Event{{ .CamelCase }} EventType = "{{ .Name }}"
 {{ end }}
 )
 {{ range . }}
-{{ if not ( skipInfoFunc .) }}
-// {{ funcName . }} returns information about a current {{ pretty . }}.
-func {{ funcName .}}() (*{{ retVal . }}, error) {
-	if Event != Event{{ camel . }} {
-		return nil, fmt.Errorf("not '{{ . }}' event")
+{{ if not .SkipEventGetFunc }}
+// {{ .EventGetFuncName }} returns information about a current {{ .Pretty }}.
+func {{ .EventGetFuncName }}() (*{{ .GithubReturnValue }}, error) {
+	if Event != Event{{ .CamelCase }} {
+		return nil, fmt.Errorf("not '{{ .Name }}' event")
 	}
-	var i {{ retVal . }}
+	var i {{ .GithubReturnValue }}
 	err := decodeEventInfo(&i)
 	return &i, err
 }

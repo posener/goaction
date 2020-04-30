@@ -8,12 +8,12 @@ import (
 )
 
 {{ range . }}
-{{ if not ( skipInfoFunc .) }}
-func Test{{ funcName .}}(t *testing.T) {
-	if Event != Event{{ camel . }} {
-		t.Skipf("Only applicatble for '{{ pretty . }}'")
+{{ if not .SkipEventGetFunc }}
+func Test{{ .EventGetFuncName }}(t *testing.T) {
+	if Event != Event{{ .CamelCase }} {
+		t.Skipf("Only applicatble for '{{ .Pretty }}'")
 	}
-	event, err := {{ funcName . }}()
+	event, err := {{ .EventGetFuncName }}()
 	assert.NoError(t, err)
 
     var out bytes.Buffer

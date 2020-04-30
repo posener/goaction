@@ -1,3 +1,4 @@
+// Generates events.go and events_test.go files.
 package main
 
 import (
@@ -10,73 +11,79 @@ import (
 	"github.com/posener/script"
 )
 
-const (
-	tmplGlob   = "internal/genevents/*.go.gotmpl"
-	tmplSuffix = ".gotmpl"
-)
+const tmplGlob = "internal/genevents/*.go.gotmpl"
 
-var (
-	events = []string{
-		"check_run",
-		"check_suite",
-		"create",
-		"delete",
-		"deployment",
-		"fork",
-		"gollum",
-		"issue_comment",
-		"issues",
-		"label",
-		"milestone",
-		"page_build",
-		"project",
-		"project_card",
-		"public",
-		"pull_request",
-		"pull_request_review",
-		"pull_request_review_comment",
-		"push",
-		"registry_package",
-		"release",
-		"status",
-		"watch",
-		"schedule",
-		"repository_dispatch",
+type event struct {
+	Name             string
+	SkipEventGetFunc bool
+}
+
+func (e event) CamelCase() string {
+	parts := strings.Split(e.Name, "_")
+	for i := range parts {
+		parts[i] = strings.Title(parts[i])
 	}
+	return strings.Join(parts, "")
+}
 
-	// Events for which not to generate an info function.
-	skipInfo = map[string]bool{
-		"schedule":         true,
-		"registry_package": true,
-	}
-)
+func (e event) Pretty() string {
+	return strings.ReplaceAll(e.Name, "_", " ")
+}
 
-var tmpl = template.Must(template.New("template").
-	Funcs(template.FuncMap{
-		"camel":        camel,
-		"pretty":       pretty,
-		"funcName":     funcName,
-		"retVal":       retVal,
-		"skipInfoFunc": skipInfoFunc,
-	}).
-	ParseGlob(tmplGlob))
+func (e event) EventGetFuncName() string {
+	return "Get" + e.CamelCase()
+}
+
+func (e event) GithubReturnValue() string {
+	return "github." + e.CamelCase() + "Event"
+}
+
+var events = []event{
+	{Name: "check_run"},
+	{Name: "check_suite"},
+	{Name: "create"},
+	{Name: "delete"},
+	{Name: "deployment"},
+	{Name: "fork"},
+	{Name: "gollum"},
+	{Name: "issue_comment"},
+	{Name: "issues"},
+	{Name: "label"},
+	{Name: "milestone"},
+	{Name: "page_build"},
+	{Name: "project"},
+	{Name: "project_card"},
+	{Name: "public"},
+	{Name: "pull_request"},
+	{Name: "pull_request_review"},
+	{Name: "pull_request_review_comment"},
+	{Name: "push"},
+	{Name: "registry_package", SkipEventGetFunc: true},
+	{Name: "release"},
+	{Name: "status"},
+	{Name: "watch"},
+	{Name: "schedule", SkipEventGetFunc: true},
+	{Name: "repository_dispatch"},
+}
+
+var tmpl = template.Must(template.ParseGlob(tmplGlob))
 
 func main() {
 	for _, t := range tmpl.Templates() {
-		out := strings.TrimSuffix(filepath.Base(t.Name()), tmplSuffix)
+		out := outFileName(t.Name())
 		f, err := os.Create(out)
 		if err != nil {
 			panic(err)
 		}
 		defer f.Close()
 
+		log.Printf("Writing %s", out)
 		err = t.Execute(f, events)
 		if err != nil {
 			panic(err)
 		}
 
 		// Format the file.
-		log.Printf("Writing %s", out)
 		err = script.ExecHandleStderr(os.Stderr, "goimports", "-w", out).ToStdout()
 		if err != nil {
 			panic(err)
@@ -84,26 +91,8 @@ func main() {
 	}
 }
 
-func camel(name string) string {
-	parts := strings.Split(name, "_")
-	for i := range parts {
-		parts[i] = strings.Title(parts[i])
-	}
-	return strings.Join(parts, "")
-}
-
-func pretty(name string) string {
-	return strings.ReplaceAll(name, "_", " ")
-}
-
-func funcName(name string) string {
-	return "Get" + camel(name)
-}
-
-func retVal(name string) string {
-	return "github." + camel(name) + "Event"
-}
-
-func skipInfoFunc(event string) bool {
-	return skipInfo[event]
+func outFileName(templateName string) string {
+	name := filepath.Base(templateName)
+	// Remove .gotmpl suffix.
+	return name[:strings.LastIndex(name, ".")]
 }
