@@ -8,7 +8,6 @@ import (
 	"go/parser"
 	"go/token"
 	"io"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -18,6 +17,7 @@ import (
 	"github.com/posener/goaction"
 	"github.com/posener/goaction/actionutil"
 	"github.com/posener/goaction/internal/metadata"
+	"github.com/posener/goaction/log"
 	"github.com/posener/script"
 )
 
@@ -42,11 +42,10 @@ const (
 )
 
 func main() {
-	log.SetFlags(log.Lshortfile)
 	flag.Parse()
 
 	if *path == "" {
-		log.Fatal("Missing required flag 'path'")
+		log.Fatalf("Missing required flag 'path'")
 	}
 
 	// Load go code.
@@ -104,7 +103,7 @@ func main() {
 	if diff != "" {
 		log.Printf("Applied changes:\n\n%s\n\n", diff)
 	} else {
-		log.Println("No changes were made.")
+		log.Printf("No changes were made.")
 	}
 
 	if !goaction.CI {
@@ -118,14 +117,14 @@ func main() {
 
 	switch goaction.Event {
 	case goaction.EventPush:
-		log.Println("Push mode.")
+		log.Printf("Push mode.")
 		if diff == "" {
-			log.Println("Skipping commit stage.")
+			log.Printf("Skipping commit stage.")
 			break
 		}
 		push()
 	case goaction.EventPullRequest:
-		log.Println("Pull request mode.")
+		log.Printf("Pull request mode.")
 		pr(diff)
 	default:
 		log.Printf("Unsupported action mode: %s", goaction.Event)
@@ -161,7 +160,7 @@ func push() {
 // Post a pull request comment with the expected diff.
 func pr(diff string) {
 	if githubToken == "" {
-		log.Println("In order to add request comment, set the GITHUB_TOKEN input.")
+		log.Printf("In order to add request comment, set the GITHUB_TOKEN input.")
 		return
 	}
 
