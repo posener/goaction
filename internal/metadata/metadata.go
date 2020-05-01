@@ -15,7 +15,7 @@ const (
 	inputFlag = "flag"
 	inputEnv  = "env"
 
-	requiredComment = "//goaction:required"
+	commentRequired = "//goaction:required"
 )
 
 type parseError error
@@ -84,7 +84,7 @@ func New(f *ast.File) (Metadata, error) {
 				panic(e)
 			}
 		}()
-		return m.inspect(n, false)
+		return m.inspect(n, docStr{})
 	})
 	if err != nil {
 		return m, err
@@ -109,46 +109,47 @@ func (m *Metadata) AddOutput(name string, out Output) {
 	m.Outputs = append(m.Outputs, yaml.MapItem{Key: name, Value: out})
 }
 
-func (m *Metadata) inspect(n ast.Node, required bool) bool {
+// Inspect might panic with `parseError` when parsing failed.
+func (m *Metadata) inspect(n ast.Node, d docStr) bool {
 	switch v := n.(type) {
 	case *ast.GenDecl:
 		// Decleration definition, catches "var ( ... )" segments.
-		m.inspectDecl(v, required)
+		m.inspectDecl(v, d)
 		return false
 	case *ast.ValueSpec:
 		// Value definition, catches "v := package.Func(...)"" calls."
-		m.inspectValue(v, required)
+		m.inspectValue(v, d)
 		return false // Covered all inspections, no need to inspect down this node.
 	case *ast.CallExpr:
-		m.inspectCall(v, required)
+		m.inspectCall(v, d)
 		return true // Continue inspecting, maybe there is another call in this call.
 	}
 	return true
 }
 
-func (m *Metadata) inspectDecl(decl *ast.GenDecl, required bool) {
+func (m *Metadata) inspectDecl(decl *ast.GenDecl, d docStr) {
 	// Decleration can be IMPORT, CONST, TYPE, VAR. We are only interested in VAR.
 	if decl.Tok != token.VAR {
 		return
 	}
-	required = required || isRequried(decl.Doc)
+	d.parse(decl.Doc)
 	for _, spec := range decl.Specs {
-		m.inspect(spec, required)
+		m.inspect(spec, d)
 	}
 }
 
-func (m *Metadata) inspectValue(value *ast.ValueSpec, required bool) {
-	required = required || isRequried(value.Doc)
+func (m *Metadata) inspectValue(value *ast.ValueSpec, d docStr) {
+	d.parse(value.Doc)
 	for _, v := range value.Values {
 		call, ok := v.(*ast.CallExpr)
 		if !ok {
 			continue
 		}
-		m.inspectCall(call, required)
+		m.inspectCall(call, d)
 	}
 }
 
-func (m *Metadata) inspectCall(call *ast.CallExpr, required bool) {
+func (m *Metadata) inspectCall(call *ast.CallExpr, d docStr) {
 	selector, ok := call.Fun.(*ast.SelectorExpr)
 	if !ok {
 		return
@@ -166,7 +167,7 @@ func (m *Metadata) inspectCall(call *ast.CallExpr, required bool) {
 			Input{
 				Default:  unqoute(stringValue(call.Args[1])),
 				Desc:     stringValue(call.Args[2]),
-				Required: required,
+				Required: d.required,
 				tp:       inputFlag,
 			})
 	case "flag.StringVar":
@@ -175,7 +176,7 @@ func (m *Metadata) inspectCall(call *ast.CallExpr, required bool) {
 			Input{
 				Default:  unqoute(stringValue(call.Args[2])),
 				Desc:     stringValue(call.Args[3]),
-				Required: required,
+				Required: d.required,
 				tp:       inputFlag,
 			})
 	case "flag.Int":
@@ -184,7 +185,7 @@ func (m *Metadata) inspectCall(call *ast.CallExpr, required bool) {
 			Input{
 				Default:  intValue(call.Args[1]),
 				Desc:     stringValue(call.Args[2]),
-				Required: required,
+				Required: d.required,
 				tp:       inputFlag,
 			})
 	case "flag.IntVar":
@@ -193,7 +194,7 @@ func (m *Metadata) inspectCall(call *ast.CallExpr, required bool) {
 			Input{
 				Default:  intValue(call.Args[2]),
 				Desc:     stringValue(call.Args[3]),
-				Required: required,
+				Required: d.required,
 				tp:       inputFlag,
 			})
 	case "flag.Bool":
@@ -202,7 +203,7 @@ func (m *Metadata) inspectCall(call *ast.CallExpr, required bool) {
 			Input{
 				Default:  boolValue(call.Args[1]),
 				Desc:     stringValue(call.Args[2]),
-				Required: required,
+				Required: d.required,
 				tp:       inputFlag,
 			})
 	case "flag.BoolVar":
@@ -211,7 +212,7 @@ func (m *Metadata) inspectCall(call *ast.CallExpr, required bool) {
 			Input{
 				Default:  boolValue(call.Args[2]),
 				Desc:     stringValue(call.Args[3]),
-				Required: required,
+				Required: d.required,
 				tp:       inputFlag,
 			})
 	case "goaction.Getenv":
@@ -220,8 +221,14 @@ func (m *Metadata) inspectCall(call *ast.CallExpr, required bool) {
 			Input{
 				Default:  unqoute(stringValue(call.Args[1])),
 				Desc:     stringValue(call.Args[2]),
-				Required: required,
+				Required: d.required,
 				tp:       inputEnv,
+			})
+	case "goaction.Output":
+		m.AddOutput(
+			unqoute(stringValue(call.Args[0])),
+			Output{
+				Desc: stringValue(call.Args[2]),
 			})
 	case "os.Getenv":
 		// Github is passing all environment variables with "INPUT_" prefix. Therefore it is
@@ -287,17 +294,21 @@ func boolValue(e ast.Expr) bool {
 	return v
 }
 
-// isRequired searches for a required comment is a comment group.
-func isRequried(doc *ast.CommentGroup) bool {
+// doc holds information from doc string.
+type docStr struct {
+	required bool
+}
+
+// parseComment searches for a special doc is a comment group.
+func (d *docStr) parse(doc *ast.CommentGroup) {
 	if doc == nil {
-		return false
+		return
 	}
 	for _, comment := range doc.List {
-		if comment.Text == requiredComment {
-			return true
+		if comment.Text == commentRequired {
+			d.required = true
 		}
 	}
-	return false
 }
 
 func name(e ast.Expr) string {

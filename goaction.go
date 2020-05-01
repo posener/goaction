@@ -86,6 +86,7 @@ Using Goaction
 package goaction
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -144,9 +145,11 @@ var (
 )
 
 // Return environment variables from Github action. Providing a default value, usage string.
-func Getenv(name string, value string, usage string) string {
+func Getenv(name string, value string, desc string) string {
 	// In Github action mode, update the environment variable name according to match the Github
 	// action modifications.
+	// Read https://help.github.com/en/actions/building-actions/metadata-syntax-for-github-actions#inputs
+	// for more info.
 	if CI {
 		name = "INPUT_" + strings.ToUpper(name)
 	}
@@ -155,6 +158,15 @@ func Getenv(name string, value string, usage string) string {
 		return value
 	}
 	return v
+}
+
+// Sets Github action output.
+// See https://help.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-output-parameter.
+func Output(name string, value string, desc string) {
+	if !CI {
+		return
+	}
+	fmt.Printf("::set-output name=%s::%s", name, value)
 }
 
 // Owner returns the name of the owner of the Github repository.

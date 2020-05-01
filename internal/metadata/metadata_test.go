@@ -29,6 +29,8 @@ var (
 	_ = flag.Bool("bool-true", true, "bool true usage")
 	_ = flag.Bool("bool-false", false, "bool false usage")
 
+	_ = goaction.Getenv("env", "default", "env usage")
+
 	s string
 	i int
 	b bool
@@ -43,7 +45,7 @@ func init() {
 }
 
 func main() {
-	_ = goaction.Getenv("env", "default", "usage of env", false)
+	goaction.Output("out", "value", "out description")
 }
 `
 
@@ -56,13 +58,15 @@ func main() {
 			{"int", Input{tp: inputFlag, Default: 1, Desc: "\"int usage\""}},
 			{"bool-true", Input{tp: inputFlag, Default: true, Desc: "\"bool true usage\""}},
 			{"bool-false", Input{tp: inputFlag, Default: false, Desc: "\"bool false usage\""}},
+			{"env", Input{tp: inputEnv, Default: "default", Desc: "\"env usage\""}},
 			{"string-var", Input{tp: inputFlag, Default: "", Desc: "\"string var usage\""}},
 			{"string-var-default", Input{tp: inputFlag, Default: "default", Desc: "\"string var default usage\""}},
 			{"int-var", Input{tp: inputFlag, Default: 0, Desc: "\"int var usage\""}},
 			{"bool-var-true", Input{tp: inputFlag, Default: true, Desc: "\"bool var true usage\""}},
 			{"bool-var-false", Input{tp: inputFlag, Default: false, Desc: "\"bool var false usage\""}},
-
-			{"env", Input{tp: inputEnv, Default: "default", Desc: "\"usage of env\""}},
+		},
+		Outputs: yaml.MapSlice{
+			{"out", Output{Desc: "\"out description\""}},
 		},
 		Runs: Runs{
 			Using: "docker",
@@ -92,11 +96,11 @@ func main() {
 	assert.Equal(t, got, want)
 }
 
-func TestNewRequired(t *testing.T) {
+func TestNewDocStr(t *testing.T) {
 	t.Parallel()
 
 	code := `
-package required
+package dockstr
 
 import (
 	"flag"
@@ -111,8 +115,6 @@ var (
 	// Test multiple definitions.
 	//goaction:required
 	_, _ = flag.String("multi1", "", "multi1"), flag.String("multi2", "", "multi2")
-
-	s string
 )
 
 // Test var definition.
@@ -125,22 +127,29 @@ var (
 	_ = flag.String("block1", "", "block1")
 	_ = flag.String("block2", "", "block2")
 )
+
+var (
+	// Test environment variable required and description.
+	//goaction:required
+	_ = goaction.Getenv("env", "", "env")
+)
 `
 
-	var want = yaml.MapSlice{
+	var wantInputs = yaml.MapSlice{
 		{"simple", Input{tp: inputFlag, Default: "", Desc: "\"simple\"", Required: true}},
 		{"multi1", Input{tp: inputFlag, Default: "", Desc: "\"multi1\"", Required: true}},
 		{"multi2", Input{tp: inputFlag, Default: "", Desc: "\"multi2\"", Required: true}},
 		{"var", Input{tp: inputFlag, Default: "", Desc: "\"var\"", Required: true}},
 		{"block1", Input{tp: inputFlag, Default: "", Desc: "\"block1\"", Required: true}},
 		{"block2", Input{tp: inputFlag, Default: "", Desc: "\"block2\"", Required: true}},
+		{"env", Input{tp: inputEnv, Default: "", Desc: "\"env\"", Required: true}},
 	}
 
 	got, err := parse(code)
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, got.Inputs, want)
+	assert.Equal(t, got.Inputs, wantInputs)
 }
 
 func TestOsGetenvFailure(t *testing.T) {
