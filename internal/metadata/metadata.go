@@ -23,26 +23,39 @@ type parseError error
 // Metadata represents the structure of Github actions metadata yaml file.
 // See https://help.github.com/en/actions/building-actions/metadata-syntax-for-github-actions.
 type Metadata struct {
-	Name     string
-	Desc     string        `yaml:"description,omitempty"`
-	Inputs   yaml.MapSlice `yaml:",omitempty"` // map[string]Input
-	Runs     Runs
+	Name    string
+	Desc    string        `yaml:"description,omitempty"`
+	Inputs  yaml.MapSlice `yaml:",omitempty"` // map[string]Input
+	Outputs yaml.MapSlice `yaml:",omitempty"` // map[string]Output
+	Runs    Runs
+	// Branding of Github action.
+	// See https://help.github.com/en/actions/building-actions/metadata-syntax-for-github-actions#branding
 	Branding struct {
 		Icon  string `yaml:",omitempty"`
 		Color string `yaml:",omitempty"`
 	} `yaml:",omitempty"`
 }
 
+// Input for a Github action.
+// See https://help.github.com/en/actions/building-actions/metadata-syntax-for-github-actions#inputs.
 type Input struct {
 	Default  interface{} `yaml:",omitempty"`
-	Desc     string      `yaml:"description"`
+	Desc     string      `yaml:"description,omitempty"`
 	Required bool
 
 	tp string
 }
 
+// Output for Github action.
+// See https://help.github.com/en/actions/building-actions/metadata-syntax-for-github-actions#outputs.
+type Output struct {
+	Desc string `yaml:"description"`
+}
+
+// Runs section for "Docker" Github action.
+// See https://help.github.com/en/actions/building-actions/metadata-syntax-for-github-actions#runs-for-docker-actions.
 type Runs struct {
-	Using string
+	Using string // Alwasy "docker"
 	Image string
 	Env   yaml.MapSlice `yaml:",omitempty"` // map[string]string
 	Args  []string      `yaml:",omitempty"`
@@ -89,7 +102,11 @@ func New(f *ast.File) (Metadata, error) {
 }
 
 func (m *Metadata) AddInput(name string, in Input) {
-	m.Inputs = append(m.Inputs, yaml.MapItem{name, in})
+	m.Inputs = append(m.Inputs, yaml.MapItem{Key: name, Value: in})
+}
+
+func (m *Metadata) AddOutput(name string, out Output) {
+	m.Outputs = append(m.Outputs, yaml.MapItem{Key: name, Value: out})
 }
 
 func (m *Metadata) inspect(n ast.Node, required bool) bool {
@@ -131,18 +148,6 @@ func (m *Metadata) inspectValue(value *ast.ValueSpec, required bool) {
 	}
 }
 
-func isRequried(doc *ast.CommentGroup) bool {
-	if doc == nil {
-		return false
-	}
-	for _, comment := range doc.List {
-		if comment.Text == requiredComment {
-			return true
-		}
-	}
-	return false
-}
-
 func (m *Metadata) inspectCall(call *ast.CallExpr, required bool) {
 	selector, ok := call.Fun.(*ast.SelectorExpr)
 	if !ok {
@@ -152,42 +157,78 @@ func (m *Metadata) inspectCall(call *ast.CallExpr, required bool) {
 	// Full call name, of the form: 'package.Function'.
 	fullName := name(selector.X) + "." + name(selector.Sel)
 
-	var in Input
-	var inName string
-
 	switch fullName {
 	default:
 		return
 	case "flag.String":
-		inName = unqoute(stringValue(call.Args[0]))
-		in = stringFlag(call.Args[1], call.Args[2])
+		m.AddInput(
+			unqoute(stringValue(call.Args[0])),
+			Input{
+				Default:  unqoute(stringValue(call.Args[1])),
+				Desc:     stringValue(call.Args[2]),
+				Required: required,
+				tp:       inputFlag,
+			})
 	case "flag.StringVar":
-		inName = unqoute(stringValue(call.Args[1]))
-		in = stringFlag(call.Args[2], call.Args[3])
+		m.AddInput(
+			unqoute(stringValue(call.Args[1])),
+			Input{
+				Default:  unqoute(stringValue(call.Args[2])),
+				Desc:     stringValue(call.Args[3]),
+				Required: required,
+				tp:       inputFlag,
+			})
 	case "flag.Int":
-		inName = unqoute(stringValue(call.Args[0]))
-		in = intFlag(call.Args[1], call.Args[2])
+		m.AddInput(
+			unqoute(stringValue(call.Args[0])),
+			Input{
+				Default:  intValue(call.Args[1]),
+				Desc:     stringValue(call.Args[2]),
+				Required: required,
+				tp:       inputFlag,
+			})
 	case "flag.IntVar":
-		inName = unqoute(stringValue(call.Args[1]))
-		in = intFlag(call.Args[2], call.Args[3])
+		m.AddInput(
+			unqoute(stringValue(call.Args[1])),
+			Input{
+				Default:  intValue(call.Args[2]),
+				Desc:     stringValue(call.Args[3]),
+				Required: required,
+				tp:       inputFlag,
+			})
 	case "flag.Bool":
-		inName = unqoute(stringValue(call.Args[0]))
-		in = boolFlag(call.Args[1], call.Args[2])
+		m.AddInput(
+			unqoute(stringValue(call.Args[0])),
+			Input{
+				Default:  boolValue(call.Args[1]),
+				Desc:     stringValue(call.Args[2]),
+				Required: required,
+				tp:       inputFlag,
+			})
 	case "flag.BoolVar":
-		inName = unqoute(stringValue(call.Args[1]))
-		in = boolFlag(call.Args[2], call.Args[3])
+		m.AddInput(
+			unqoute(stringValue(call.Args[1])),
+			Input{
+				Default:  boolValue(call.Args[2]),
+				Desc:     stringValue(call.Args[3]),
+				Required: required,
+				tp:       inputFlag,
+			})
 	case "goaction.Getenv":
-		inName = unqoute(stringValue(call.Args[0]))
-		in = stringFlag(call.Args[1], call.Args[2])
-		in.tp = inputEnv
+		m.AddInput(
+			unqoute(stringValue(call.Args[0])),
+			Input{
+				Default:  unqoute(stringValue(call.Args[1])),
+				Desc:     stringValue(call.Args[2]),
+				Required: required,
+				tp:       inputEnv,
+			})
 	case "os.Getenv":
 		// Github is passing all environment variables with "INPUT_" prefix. Therefore it is
 		// required to use the goaction environment wrapper.
 		key := stringValue(call.Args[0])
 		panic(parseError(fmt.Errorf("Found `os.Getenv(%s)`, use `goaction.Getenv(%s)` instead", key, key)))
 	}
-	in.Required = required
-	m.AddInput(inName, in)
 }
 
 func calcArgs(inputs yaml.MapSlice /* map[string]Input */) ([]string, error) {
@@ -216,60 +257,6 @@ func calcEnv(inputs yaml.MapSlice /* map[string]Input */) (yaml.MapSlice /* map[
 	return envs, nil
 }
 
-func stringFlag(def ast.Expr, desc ast.Expr) Input {
-	var in Input
-	if v := unqoute(stringValue(def)); v != "" {
-		in.Default = v
-	}
-	in.Desc = stringValue(desc)
-	in.tp = inputFlag
-	return in
-}
-
-func intFlag(def ast.Expr, desc ast.Expr) Input {
-	var in Input
-	if v := stringValue(def); v != "" {
-		var err error
-		in.Default, err = strconv.Atoi(v)
-		if err != nil {
-			panic(parseError(err))
-		}
-	}
-	in.Desc = stringValue(desc)
-	in.tp = inputFlag
-	return in
-}
-
-func boolFlag(def ast.Expr, desc ast.Expr) Input {
-	var in Input
-	if v := stringValue(def); v != "" {
-		var err error
-		in.Default, err = strconv.ParseBool(v)
-		if err != nil {
-			panic(parseError(err))
-		}
-	}
-	in.Desc = stringValue(desc)
-	in.tp = inputFlag
-	return in
-}
-
-func name(e ast.Expr) string {
-	id, ok := e.(*ast.Ident)
-	if !ok {
-		return ""
-	}
-	return id.Name
-}
-
-func unqoute(s string) string {
-	uq, err := strconv.Unquote(s)
-	if err == nil {
-		return uq
-	}
-	return s
-}
-
 func stringValue(e ast.Expr) string {
 	switch x := e.(type) {
 	case *ast.BasicLit:
@@ -282,4 +269,49 @@ func stringValue(e ast.Expr) string {
 	default:
 		panic(parseError(fmt.Errorf("unsupported expression: %T", e)))
 	}
+}
+
+func intValue(e ast.Expr) int {
+	v, err := strconv.Atoi(stringValue(e))
+	if err != nil {
+		panic(parseError(err))
+	}
+	return v
+}
+
+func boolValue(e ast.Expr) bool {
+	v, err := strconv.ParseBool(stringValue(e))
+	if err != nil {
+		panic(parseError(err))
+	}
+	return v
+}
+
+// isRequired searches for a required comment is a comment group.
+func isRequried(doc *ast.CommentGroup) bool {
+	if doc == nil {
+		return false
+	}
+	for _, comment := range doc.List {
+		if comment.Text == requiredComment {
+			return true
+		}
+	}
+	return false
+}
+
+func name(e ast.Expr) string {
+	id, ok := e.(*ast.Ident)
+	if !ok {
+		return ""
+	}
+	return id.Name
+}
+
+func unqoute(s string) string {
+	uq, err := strconv.Unquote(s)
+	if err != nil {
+		return s
+	}
+	return uq
 }

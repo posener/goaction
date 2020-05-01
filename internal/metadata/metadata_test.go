@@ -51,12 +51,12 @@ func main() {
 		Name: "inputs",
 		Desc: "\"Package inputs tests parsing of input calls.\"",
 		Inputs: yaml.MapSlice{
-			{"string", Input{tp: inputFlag, Desc: "\"string usage\""}},
+			{"string", Input{tp: inputFlag, Default: "", Desc: "\"string usage\""}},
 			{"string-default", Input{tp: inputFlag, Default: "default", Desc: "\"string default usage\""}},
 			{"int", Input{tp: inputFlag, Default: 1, Desc: "\"int usage\""}},
 			{"bool-true", Input{tp: inputFlag, Default: true, Desc: "\"bool true usage\""}},
 			{"bool-false", Input{tp: inputFlag, Default: false, Desc: "\"bool false usage\""}},
-			{"string-var", Input{tp: inputFlag, Desc: "\"string var usage\""}},
+			{"string-var", Input{tp: inputFlag, Default: "", Desc: "\"string var usage\""}},
 			{"string-var-default", Input{tp: inputFlag, Default: "default", Desc: "\"string var default usage\""}},
 			{"int-var", Input{tp: inputFlag, Default: 0, Desc: "\"int var usage\""}},
 			{"bool-var-true", Input{tp: inputFlag, Default: true, Desc: "\"bool var true usage\""}},
@@ -128,12 +128,12 @@ var (
 `
 
 	var want = yaml.MapSlice{
-		{"simple", Input{tp: inputFlag, Desc: "\"simple\"", Required: true}},
-		{"multi1", Input{tp: inputFlag, Desc: "\"multi1\"", Required: true}},
-		{"multi2", Input{tp: inputFlag, Desc: "\"multi2\"", Required: true}},
-		{"var", Input{tp: inputFlag, Desc: "\"var\"", Required: true}},
-		{"block1", Input{tp: inputFlag, Desc: "\"block1\"", Required: true}},
-		{"block2", Input{tp: inputFlag, Desc: "\"block2\"", Required: true}},
+		{"simple", Input{tp: inputFlag, Default: "", Desc: "\"simple\"", Required: true}},
+		{"multi1", Input{tp: inputFlag, Default: "", Desc: "\"multi1\"", Required: true}},
+		{"multi2", Input{tp: inputFlag, Default: "", Desc: "\"multi2\"", Required: true}},
+		{"var", Input{tp: inputFlag, Default: "", Desc: "\"var\"", Required: true}},
+		{"block1", Input{tp: inputFlag, Default: "", Desc: "\"block1\"", Required: true}},
+		{"block2", Input{tp: inputFlag, Default: "", Desc: "\"block2\"", Required: true}},
 	}
 
 	got, err := parse(code)
