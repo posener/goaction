@@ -94,5 +94,7 @@ $ docker run --rm my-action
 
 * [actionutil](./actionutil): Package actionutil provides utility functions for Github actions.
 
+* [log](./log): Package log is an alternative package for standard library "log" package for logging in Github action environment.
+
 ---
 Readme created from Go doc with [goreadme](https://github.com/posener/goreadme)
