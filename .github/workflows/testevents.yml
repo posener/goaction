@@ -1,3 +1,4 @@
+# Tests parsing of event json objects in different Github events.
 on:
 - check_run
 - check_suite
@@ -35,4 +36,4 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
     - name: Test
-      run: go test -run "$TestGet" -v
+      run: go test -run "^TestGet" -v

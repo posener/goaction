@@ -12,6 +12,5 @@ jobs:
         - name: Update readme according to Go doc
           uses: posener/goreadme@v1
           with:
-            recursive: true
             badge-godoc: true
             github-token: '${{ secrets.GITHUB_TOKEN }}'
