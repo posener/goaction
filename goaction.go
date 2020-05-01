@@ -88,6 +88,7 @@ package goaction
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -144,6 +145,13 @@ var (
 
 	repoParts = strings.Split(Repository, "/")
 )
+
+func init() {
+	if CI {
+		// Set the default logging to stdout since Github actions treats stderr as error level logs.
+		log.SetOutput(os.Stdout)
+	}
+}
 
 // Getenv returns an environment variable for the requested name. On top of `os.Getenv` it enables
 // defining a default `value` and description for the github action input section.
