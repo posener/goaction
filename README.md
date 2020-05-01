@@ -25,7 +25,8 @@ script is simply a main package located somewhere in this project.
 
 One limitation is that this main package should contain a main file, and this file must contain all
 the required inputs for this binary. This inputs are defined with the standard `flag` package for
-command line arguments, or by `goaction.Getenv` for environment variables.
+command line arguments, or by `os.Getenv` for environment variables (Optionally use
+`goaction.Getenv` to define default value and description to an environment variables).
 
 > These inputs define the API of the program. `goaction` automatically detect them and creates the
 > `action.yml` file from them.
@@ -92,8 +93,6 @@ $ docker run --rm my-action
 ## Sub Packages
 
 * [actionutil](./actionutil): Package actionutil provides utility functions for Github actions.
-
-* [cmd/goaction](./cmd/goaction): Creates action files for Go code
 
 ---
 Readme created from Go doc with [goreadme](https://github.com/posener/goreadme)
