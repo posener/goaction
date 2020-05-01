@@ -15,7 +15,8 @@ const (
 	inputFlag = "flag"
 	inputEnv  = "env"
 
-	commentRequired = "//goaction:required"
+	docRequired = "//goaction:required"
+	docSkip     = "//goaction:skip"
 )
 
 type parseError error
@@ -133,6 +134,9 @@ func (m *Metadata) inspectDecl(decl *ast.GenDecl, d docStr) {
 		return
 	}
 	d.parse(decl.Doc)
+	if d.skip {
+		return
+	}
 	for _, spec := range decl.Specs {
 		m.inspect(spec, d)
 	}
@@ -140,6 +144,9 @@ func (m *Metadata) inspectDecl(decl *ast.GenDecl, d docStr) {
 
 func (m *Metadata) inspectValue(value *ast.ValueSpec, d docStr) {
 	d.parse(value.Doc)
+	if d.skip {
+		return
+	}
 	for _, v := range value.Values {
 		call, ok := v.(*ast.CallExpr)
 		if !ok {
@@ -165,7 +172,7 @@ func (m *Metadata) inspectCall(call *ast.CallExpr, d docStr) {
 		m.AddInput(
 			unqoute(stringValue(call.Args[0])),
 			Input{
-				Default:  unqoute(stringValue(call.Args[1])),
+				Default:  omitEmpty(unqoute(stringValue(call.Args[1]))),
 				Desc:     stringValue(call.Args[2]),
 				Required: d.required,
 				tp:       inputFlag,
@@ -174,7 +181,7 @@ func (m *Metadata) inspectCall(call *ast.CallExpr, d docStr) {
 		m.AddInput(
 			unqoute(stringValue(call.Args[1])),
 			Input{
-				Default:  unqoute(stringValue(call.Args[2])),
+				Default:  omitEmpty(unqoute(stringValue(call.Args[2]))),
 				Desc:     stringValue(call.Args[3]),
 				Required: d.required,
 				tp:       inputFlag,
@@ -215,11 +222,18 @@ func (m *Metadata) inspectCall(call *ast.CallExpr, d docStr) {
 				Required: d.required,
 				tp:       inputFlag,
 			})
+	case "os.Getenv":
+		m.AddInput(
+			unqoute(stringValue(call.Args[0])),
+			Input{
+				Required: d.required,
+				tp:       inputEnv,
+			})
 	case "goaction.Getenv":
 		m.AddInput(
 			unqoute(stringValue(call.Args[0])),
 			Input{
-				Default:  unqoute(stringValue(call.Args[1])),
+				Default:  omitEmpty(unqoute(stringValue(call.Args[1]))),
 				Desc:     stringValue(call.Args[2]),
 				Required: d.required,
 				tp:       inputEnv,
@@ -230,11 +244,6 @@ func (m *Metadata) inspectCall(call *ast.CallExpr, d docStr) {
 			Output{
 				Desc: stringValue(call.Args[2]),
 			})
-	case "os.Getenv":
-		// Github is passing all environment variables with "INPUT_" prefix. Therefore it is
-		// required to use the goaction environment wrapper.
-		key := stringValue(call.Args[0])
-		panic(parseError(fmt.Errorf("Found `os.Getenv(%s)`, use `goaction.Getenv(%s)` instead", key, key)))
 	}
 }
 
@@ -297,6 +306,7 @@ func boolValue(e ast.Expr) bool {
 // doc holds information from doc string.
 type docStr struct {
 	required bool
+	skip     bool
 }
 
 // parseComment searches for a special doc is a comment group.
@@ -305,8 +315,11 @@ func (d *docStr) parse(doc *ast.CommentGroup) {
 		return
 	}
 	for _, comment := range doc.List {
-		if comment.Text == commentRequired {
+		switch comment.Text {
+		case docRequired:
 			d.required = true
+		case docSkip:
+			d.skip = true
 		}
 	}
 }
@@ -325,4 +338,11 @@ func unqoute(s string) string {
 		return s
 	}
 	return uq
+}
+
+func omitEmpty(s string) interface{} {
+	if s == "" {
+		return nil
+	}
+	return s
 }

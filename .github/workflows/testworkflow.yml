@@ -1,0 +1,57 @@
+# Test communication between different actions in a workflow.
+on:
+- pull_request
+- push
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      out: ${{ steps.prepare.outputs.out }}
+    steps:
+    - name: Install Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.14.x
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Install new version of goaction
+      run: go build -o /tmp/goaction ./cmd/goaction
+      # Prepare env and output that will be tested in other jobs.
+    - name: Generate action files of prepare
+      env:
+        CI: false
+      run: /tmp/goaction -path ./.github/tests/prepare/main.go
+    - id: prepare
+      name: Prepare
+      uses: ./
+
+      # Test propagation of env set by prepare. Must run in the same job as the prepare step.
+    - name: Generate action files of prepare test-env-set
+      env:
+        CI: false
+      run: /tmp/goaction -path ./.github/tests/test-env-set/main.go
+    - name: Test env-set
+      uses: ./
+  tests:
+    needs: prepare
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.14.x
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Install new version of goaction
+      run: go build -o /tmp/goaction ./cmd/goaction
+    - name: Generate action files of test-input
+      env:
+        CI: false
+      run: /tmp/goaction -path ./.github/tests/test-input/main.go
+    - name: Test input
+      uses: ./
+      with:
+        message: ${{ needs.prepare.outputs.out }}
+        arg: 42
+        env: env
+        os-env: os-env

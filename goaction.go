@@ -22,7 +22,8 @@ script is simply a main package located somewhere in this project.
 
 One limitation is that this main package should contain a main file, and this file must contain all
 the required inputs for this binary. This inputs are defined with the standard `flag` package for
-command line arguments, or by `goaction.Getenv` for environment variables.
+command line arguments, or by `os.Getenv` for environment variables (Optionally use
+`goaction.Getenv` to define default value and description to an environment variables).
 
 > These inputs define the API of the program. `goaction` automatically detect them and creates the
 > `action.yml` file from them.
@@ -144,29 +145,57 @@ var (
 	repoParts = strings.Split(Repository, "/")
 )
 
-// Return environment variables from Github action. Providing a default value, usage string.
+// Getenv returns an environment variable for the requested name. On top of `os.Getenv` it enables
+// defining a default `value` and description for the github action input section.
 func Getenv(name string, value string, desc string) string {
-	// In Github action mode, update the environment variable name according to match the Github
-	// action modifications.
-	// Read https://help.github.com/en/actions/building-actions/metadata-syntax-for-github-actions#inputs
-	// for more info.
-	if CI {
-		name = "INPUT_" + strings.ToUpper(name)
-	}
 	v := os.Getenv(name)
+	// If empty, return default value.
 	if v == "" {
 		return value
 	}
 	return v
 }
 
-// Sets Github action output.
+// Setenv sets an environment variable that will only be visible for all following Github actions in
+// the current workflow, but not in the current action.
+// See https://help.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-environment-variable.
+func Setenv(name string, value string) {
+	if !CI {
+		return
+	}
+	// Store in the given environment variable name such that programs that expect this environment
+	// variable (not through goaction) can get it.
+	fmt.Printf("::set-env name=%s::%s\n", name, value)
+}
+
+// Export sets an environment variable that will also be visible for all following Github actions in
+// the current worflow.
+func Export(name string, value string) error {
+	err := os.Setenv(name, value)
+	if err != nil {
+		return err
+	}
+	Setenv(name, value)
+	return nil
+}
+
+// Output sets Github action output.
 // See https://help.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-output-parameter.
 func Output(name string, value string, desc string) {
 	if !CI {
 		return
 	}
-	fmt.Printf("::set-output name=%s::%s", name, value)
+	fmt.Printf("::set-output name=%s::%s\n", name, value)
+}
+
+// AddPath prepends a directory to the system PATH variable for all subsequent actions in the
+// current job. The currently running action cannot access the new path variable.
+// See https://help.github.com/en/actions/reference/workflow-commands-for-github-actions#adding-a-system-path.
+func AddPath(path string) {
+	if !CI {
+		return
+	}
+	fmt.Printf("::add-path::%s\n", path)
 }
 
 // Owner returns the name of the owner of the Github repository.

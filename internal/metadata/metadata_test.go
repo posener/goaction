@@ -19,6 +19,7 @@ package inputs
 
 import (
 	"flag"
+	"os"
 	"github.com/posener/goaction"
 )
 
@@ -30,6 +31,7 @@ var (
 	_ = flag.Bool("bool-false", false, "bool false usage")
 
 	_ = goaction.Getenv("env", "default", "env usage")
+	_ = os.Getenv("os-env")
 
 	s string
 	i int
@@ -53,13 +55,14 @@ func main() {
 		Name: "inputs",
 		Desc: "\"Package inputs tests parsing of input calls.\"",
 		Inputs: yaml.MapSlice{
-			{"string", Input{tp: inputFlag, Default: "", Desc: "\"string usage\""}},
+			{"string", Input{tp: inputFlag, Desc: "\"string usage\""}},
 			{"string-default", Input{tp: inputFlag, Default: "default", Desc: "\"string default usage\""}},
 			{"int", Input{tp: inputFlag, Default: 1, Desc: "\"int usage\""}},
 			{"bool-true", Input{tp: inputFlag, Default: true, Desc: "\"bool true usage\""}},
 			{"bool-false", Input{tp: inputFlag, Default: false, Desc: "\"bool false usage\""}},
 			{"env", Input{tp: inputEnv, Default: "default", Desc: "\"env usage\""}},
-			{"string-var", Input{tp: inputFlag, Default: "", Desc: "\"string var usage\""}},
+			{"os-env", Input{tp: inputEnv}},
+			{"string-var", Input{tp: inputFlag, Desc: "\"string var usage\""}},
 			{"string-var-default", Input{tp: inputFlag, Default: "default", Desc: "\"string var default usage\""}},
 			{"int-var", Input{tp: inputFlag, Default: 0, Desc: "\"int var usage\""}},
 			{"bool-var-true", Input{tp: inputFlag, Default: true, Desc: "\"bool var true usage\""}},
@@ -85,6 +88,7 @@ func main() {
 			},
 			Env: yaml.MapSlice{
 				{"env", "\"${{ inputs.env }}\""},
+				{"os-env", "\"${{ inputs.os-env }}\""},
 			},
 		},
 	}
@@ -96,7 +100,8 @@ func main() {
 	assert.Equal(t, got, want)
 }
 
-func TestNewDocStr(t *testing.T) {
+// Tests cases of goaction:required comment.
+func TestNewRquired(t *testing.T) {
 	t.Parallel()
 
 	code := `
@@ -104,13 +109,15 @@ package dockstr
 
 import (
 	"flag"
+	"os"
 	"github.com/posener/goaction"
 )
 
 var (
-	// Test simple case
+	// Test two following definitions. The required should apply only to the first.
 	//goaction:required
-	_ = flag.String("simple", "", "simple")
+	_ = flag.String("simple1", "", "simple1")
+	_ = flag.String("simple2", "", "simple2")
 
 	// Test multiple definitions.
 	//goaction:required
@@ -132,17 +139,21 @@ var (
 	// Test environment variable required and description.
 	//goaction:required
 	_ = goaction.Getenv("env", "", "env")
+	//goaction:required
+	_ = os.Getenv("os-env")
 )
 `
 
 	var wantInputs = yaml.MapSlice{
-		{"simple", Input{tp: inputFlag, Default: "", Desc: "\"simple\"", Required: true}},
-		{"multi1", Input{tp: inputFlag, Default: "", Desc: "\"multi1\"", Required: true}},
-		{"multi2", Input{tp: inputFlag, Default: "", Desc: "\"multi2\"", Required: true}},
-		{"var", Input{tp: inputFlag, Default: "", Desc: "\"var\"", Required: true}},
-		{"block1", Input{tp: inputFlag, Default: "", Desc: "\"block1\"", Required: true}},
-		{"block2", Input{tp: inputFlag, Default: "", Desc: "\"block2\"", Required: true}},
-		{"env", Input{tp: inputEnv, Default: "", Desc: "\"env\"", Required: true}},
+		{"simple1", Input{tp: inputFlag, Desc: "\"simple1\"", Required: true}},
+		{"simple2", Input{tp: inputFlag, Desc: "\"simple2\""}},
+		{"multi1", Input{tp: inputFlag, Desc: "\"multi1\"", Required: true}},
+		{"multi2", Input{tp: inputFlag, Desc: "\"multi2\"", Required: true}},
+		{"var", Input{tp: inputFlag, Desc: "\"var\"", Required: true}},
+		{"block1", Input{tp: inputFlag, Desc: "\"block1\"", Required: true}},
+		{"block2", Input{tp: inputFlag, Desc: "\"block2\"", Required: true}},
+		{"env", Input{tp: inputEnv, Desc: "\"env\"", Required: true}},
+		{"os-env", Input{tp: inputEnv, Required: true}},
 	}
 
 	got, err := parse(code)
@@ -152,17 +163,58 @@ var (
 	assert.Equal(t, got.Inputs, wantInputs)
 }
 
-func TestOsGetenvFailure(t *testing.T) {
+// Tests cases of goaction:skip comment.
+func TestNewSkip(t *testing.T) {
 	t.Parallel()
 
 	code := `
-package required
-import "os"
-var env = os.Getenv("env")
+package dockstr
+
+import (
+	"flag"
+	"github.com/posener/goaction"
+)
+
+var (
+	// Test two following definitions. The skip should apply only to the first.
+	//goaction:skip
+	_ = flag.String("simple1", "", "simple1")
+	_ = flag.String("simple2", "", "simple2")
+
+	// Test multiple definitions.
+	//goaction:skip
+	_, _ = flag.String("multi1", "", "multi1"), flag.String("multi2", "", "multi2")
+)
+
+// Test var definition.
+//goaction:skip
+var _ = flag.String("var", "", "var")
+
+// Test var block.
+//goaction:skip
+var (
+	_ = flag.String("block1", "", "block1")
+	_ = flag.String("block2", "", "block2")
+)
+
+var (
+	// Test environment variable required and description.
+	//goaction:skip
+	_ = goaction.Getenv("env", "", "env")
+	//goaction:skip
+	_ = os.Getenv("os-env")
+)
 `
 
-	_, err := parse(code)
-	assert.Error(t, err)
+	var wantInputs = yaml.MapSlice{
+		{"simple2", Input{tp: inputFlag, Desc: "\"simple2\""}},
+	}
+
+	got, err := parse(code)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, got.Inputs, wantInputs)
 }
 
 func TestMarshal(t *testing.T) {
