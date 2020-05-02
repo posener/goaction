@@ -5,8 +5,8 @@
 Package goaction enables writing Github Actions in Go.
 
 The idea is - write a Go script one that you could also run with `go run`, and use it as Github
-action. This project will create all the required files generated specifically for your script. Your
-script can also use this library in order to get workflow information.
+action. This project will generate all the required files specifically for your script. Your script
+can also use this library in order to get workflow information.
 
 ## Required steps
 
