@@ -3,6 +3,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"go/parser"
@@ -58,6 +59,11 @@ func main() {
 	// Parse Go code to Github actions metadata.
 	m, err := metadata.New(f)
 	if err != nil {
+		// For parsing error, log the file location.
+		var pe metadata.ErrParse
+		if errors.As(err, &pe) {
+			log.FatalFile(fset.Position(pe.Pos), err)
+		}
 		log.Fatal(err)
 	}
 	if *name != "" {

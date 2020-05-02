@@ -9,6 +9,7 @@ package log
 
 import (
 	"fmt"
+	"go/token"
 	"log"
 	"os"
 	"strings"
@@ -34,86 +35,79 @@ func init() {
 
 type level string
 
-func (l level) format(lc Loc) string {
-	loc := lc.String()
+func (l level) format(p token.Position) string {
+	pos := posString(p)
 	if !goaction.CI {
-		if len(loc) > 0 {
-			loc = loc + ": "
+		if len(pos) > 0 {
+			pos = pos + ": "
 		}
-		return loc
+		return pos
 	}
-	if len(loc) > 0 {
-		loc = " " + loc
+	if len(pos) > 0 {
+		pos = " " + pos
 	}
-	return fmt.Sprintf(string(l), loc)
+	return fmt.Sprintf(string(l), pos)
 }
 
 // Printf logs a debug level message.
 func Printf(format string, args ...interface{}) {
-	PrintfFile(Loc{}, format, args...)
+	PrintfFile(token.Position{}, format, args...)
 }
 
 // Printf logs a debug level message with a file location.
-func PrintfFile(f Loc, format string, args ...interface{}) {
-	logger.Printf(levelDebug.format(f)+format, args...)
+func PrintfFile(p token.Position, format string, args ...interface{}) {
+	logger.Printf(levelDebug.format(p)+format, args...)
 }
 
 // Warnf logs a warning level message.
 func Warnf(format string, args ...interface{}) {
-	WarnfFile(Loc{}, format, args...)
+	WarnfFile(token.Position{}, format, args...)
 }
 
 // WarnfFile logs a warning level message with a file location.
-func WarnfFile(f Loc, format string, args ...interface{}) {
-	logger.Printf(levelWarn.format(f)+format, args...)
+func WarnfFile(p token.Position, format string, args ...interface{}) {
+	logger.Printf(levelWarn.format(p)+format, args...)
 }
 
 // Errorf logs an error level message.
 func Errorf(format string, args ...interface{}) {
-	ErrorfFile(Loc{}, format, args...)
+	ErrorfFile(token.Position{}, format, args...)
 }
 
 // ErrorfFile logs an error level message with a file location.
-func ErrorfFile(f Loc, format string, args ...interface{}) {
-	logger.Printf(levelError.format(f)+format, args...)
+func ErrorfFile(p token.Position, format string, args ...interface{}) {
+	logger.Printf(levelError.format(p)+format, args...)
 }
 
 // Fatalf logs an error level message, and fails the program.
 func Fatalf(format string, args ...interface{}) {
-	FatalfFile(Loc{}, format, args...)
+	FatalfFile(token.Position{}, format, args...)
 }
 
 // FatalfFile logs an error level message with a file location, and fails the program.
-func FatalfFile(f Loc, format string, args ...interface{}) {
-	logger.Fatalf(levelError.format(f)+format, args...)
+func FatalfFile(p token.Position, format string, args ...interface{}) {
+	logger.Fatalf(levelError.format(p)+format, args...)
 }
 
 // Fatal logs an error level message, and fails the program.
 func Fatal(v ...interface{}) {
-	FatalFile(Loc{}, v...)
+	FatalFile(token.Position{}, v...)
 }
 
 // FatalFile logs an error level message with a file location, and fails the program.
-func FatalFile(f Loc, v ...interface{}) {
-	logger.Fatal(append([]interface{}{levelError.format(f)}, v...)...)
+func FatalFile(p token.Position, v ...interface{}) {
+	logger.Fatal(append([]interface{}{levelError.format(p)}, v...)...)
 }
 
-// Loc provides file location infromation for logging purposes.
-type Loc struct {
-	Path string // Path to file.
-	Line int    // Line in file.
-	Col  int    // Col is column in line.
-}
-
-func (f Loc) String() string {
-	if f.Path == "" {
+func posString(p token.Position) string {
+	if p.Filename == "" {
 		return ""
 	}
-	parts := []string{"file=" + f.Path}
-	if f.Line > 0 {
-		parts = append(parts, fmt.Sprintf("line=%d", f.Line))
-		if f.Col > 0 {
-			parts = append(parts, fmt.Sprintf("col=%d", f.Col))
+	parts := []string{"file=" + p.Filename}
+	if p.Line > 0 {
+		parts = append(parts, fmt.Sprintf("line=%d", p.Line))
+		if p.Column > 0 {
+			parts = append(parts, fmt.Sprintf("col=%d", p.Column))
 		}
 	}
 	return strings.Join(parts, ",")

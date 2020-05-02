@@ -19,7 +19,10 @@ const (
 	docSkip     = "//goaction:skip"
 )
 
-type parseError error
+type ErrParse struct {
+	Pos token.Pos
+	error
+}
 
 // Metadata represents the structure of Github actions metadata yaml file.
 // See https://help.github.com/en/actions/building-actions/metadata-syntax-for-github-actions.
@@ -80,7 +83,7 @@ func New(f *ast.File) (Metadata, error) {
 				return
 			}
 			var ok bool
-			err, ok = e.(parseError)
+			err, ok = e.(ErrParse)
 			if !ok {
 				panic(e)
 			}
@@ -281,16 +284,16 @@ func stringValue(e ast.Expr) string {
 		if x.Name == "true" || x.Name == "false" {
 			return x.Name
 		}
-		panic(parseError(fmt.Errorf("unsupported identifier: %v", x.Name)))
+		panic(ErrParse{error: fmt.Errorf("unsupported identifier: %v", x.Name), Pos: e.Pos()})
 	default:
-		panic(parseError(fmt.Errorf("unsupported expression: %T", e)))
+		panic(ErrParse{error: fmt.Errorf("unsupported expression: %T", e), Pos: e.Pos()})
 	}
 }
 
 func intValue(e ast.Expr) int {
 	v, err := strconv.Atoi(stringValue(e))
 	if err != nil {
-		panic(parseError(err))
+		panic(ErrParse{error: err, Pos: e.Pos()})
 	}
 	return v
 }
@@ -298,7 +301,7 @@ func intValue(e ast.Expr) int {
 func boolValue(e ast.Expr) bool {
 	v, err := strconv.ParseBool(stringValue(e))
 	if err != nil {
-		panic(parseError(err))
+		panic(ErrParse{error: err, Pos: e.Pos()})
 	}
 	return v
 }

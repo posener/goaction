@@ -2,6 +2,7 @@ package log
 
 import (
 	"bytes"
+	"go/token"
 	"testing"
 
 	"github.com/posener/goaction"
@@ -55,15 +56,15 @@ func logThings() string {
 	Warnf("warnf %s", "foo")
 	Errorf("errorf %s", "foo")
 
-	f := Loc{Path: "foo.go", Line: 10, Col: 3}
-	PrintfFile(f, "printf %s", "foo")
-	WarnfFile(f, "warnf %s", "foo")
-	ErrorfFile(f, "errorf %s", "foo")
+	p := token.Position{Filename: "foo.go", Line: 10, Column: 3}
+	PrintfFile(p, "printf %s", "foo")
+	WarnfFile(p, "warnf %s", "foo")
+	ErrorfFile(p, "errorf %s", "foo")
 
-	f = Loc{Path: "foo.go"}
-	PrintfFile(f, "printf %s", "foo")
-	WarnfFile(f, "warnf %s", "foo")
-	ErrorfFile(f, "errorf %s", "foo")
+	p = token.Position{Filename: "foo.go"}
+	PrintfFile(p, "printf %s", "foo")
+	WarnfFile(p, "warnf %s", "foo")
+	ErrorfFile(p, "errorf %s", "foo")
 
 	return b.String()
 }
