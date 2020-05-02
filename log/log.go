@@ -25,12 +25,36 @@ const (
 	levelError level = "::error%s::"
 )
 
+var (
+	// File position formattings:
+	formatFile string
+	formatLine string
+	formatCol  string
+	formatJoin string
+)
+
 func init() {
 	out := os.Stdout
 	if !goaction.CI {
 		out = os.Stderr
 	}
 	logger = log.New(out, "", 0)
+	initFormats()
+}
+
+// initFormats initializes format strings. Exists for testing purposes.
+func initFormats() {
+	if goaction.CI {
+		formatFile = "file=%s"
+		formatLine = "line=%d"
+		formatCol = "col=%d"
+		formatJoin = ","
+	} else {
+		formatFile = "%s"
+		formatLine = "+%d"
+		formatCol = ":%d"
+		formatJoin = ""
+	}
 }
 
 type level string
@@ -103,14 +127,15 @@ func posString(p token.Position) string {
 	if p.Filename == "" {
 		return ""
 	}
-	parts := []string{"file=" + p.Filename}
+
+	parts := []string{fmt.Sprintf(formatFile, p.Filename)}
 	if p.Line > 0 {
-		parts = append(parts, fmt.Sprintf("line=%d", p.Line))
+		parts = append(parts, fmt.Sprintf(formatLine, p.Line))
 		if p.Column > 0 {
-			parts = append(parts, fmt.Sprintf("col=%d", p.Column))
+			parts = append(parts, fmt.Sprintf(formatCol, p.Column))
 		}
 	}
-	return strings.Join(parts, ",")
+	return strings.Join(parts, formatJoin)
 }
 
 // Mask a term in the logs (will appear as '*' instead.)

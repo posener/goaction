@@ -15,6 +15,7 @@ func TestLog(t *testing.T) {
 
 	t.Run("CI=true", func(t *testing.T) {
 		goaction.CI = true
+		initFormats()
 
 		want := `::debug::printf foo
 ::warning::warnf foo
@@ -32,16 +33,17 @@ func TestLog(t *testing.T) {
 
 	t.Run("CI=false", func(t *testing.T) {
 		goaction.CI = false
+		initFormats()
 
 		want := `printf foo
 warnf foo
 errorf foo
-file=foo.go,line=10,col=3: printf foo
-file=foo.go,line=10,col=3: warnf foo
-file=foo.go,line=10,col=3: errorf foo
-file=foo.go: printf foo
-file=foo.go: warnf foo
-file=foo.go: errorf foo
+foo.go+10:3: printf foo
+foo.go+10:3: warnf foo
+foo.go+10:3: errorf foo
+foo.go: printf foo
+foo.go: warnf foo
+foo.go: errorf foo
 `
 
 		assert.Equal(t, want, logThings())
