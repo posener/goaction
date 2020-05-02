@@ -73,13 +73,20 @@ func (l level) format(p token.Position) string {
 	return fmt.Sprintf(string(l), pos)
 }
 
-// Printf logs a debug level message.
+// Printf logs an info level message.
 func Printf(format string, args ...interface{}) {
-	PrintfFile(token.Position{}, format, args...)
+	logger.Printf(format, args...)
 }
 
-// Printf logs a debug level message with a file location.
-func PrintfFile(p token.Position, format string, args ...interface{}) {
+// Debugf logs a debug level message. To view these logs, set secret ACTIONS_STEP_DEBUG=true at
+// https://github.com/<repo>/settings/secrets/new.
+func Debugf(format string, args ...interface{}) {
+	DebugfFile(token.Position{}, format, args...)
+}
+
+// DebugfFile logs a debug level message with a file location. To view these logs, set secret
+// variable ACTIONS_STEP_DEBUG=true at https://github.com/<repo>/settings/secrets/new.
+func DebugfFile(p token.Position, format string, args ...interface{}) {
 	logger.Printf(levelDebug.format(p)+format, args...)
 }
 
