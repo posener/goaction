@@ -2,10 +2,10 @@ package actionutil
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/posener/goaction"
+	"github.com/posener/goaction/log"
 	"github.com/posener/script"
 )
 

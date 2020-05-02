@@ -3,11 +3,11 @@ package actionutil
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/google/go-github/v31/github"
 	"github.com/posener/goaction"
+	"github.com/posener/goaction/log"
 	"golang.org/x/oauth2"
 )
 

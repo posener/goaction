@@ -2,10 +2,10 @@ package main
 
 import (
 	"flag"
-	"log"
 	"os"
 
 	"github.com/posener/goaction"
+	"github.com/posener/goaction/log"
 )
 
 var (
