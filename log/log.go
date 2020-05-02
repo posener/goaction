@@ -18,7 +18,7 @@ import (
 
 var logger *log.Logger
 
-var (
+const (
 	levelDebug level = "::debug%s::"
 	levelWarn  level = "::warning%s::"
 	levelError level = "::error%s::"
@@ -27,89 +27,86 @@ var (
 func init() {
 	out := os.Stdout
 	if !goaction.CI {
-		levelDebug = ""
-		levelWarn = ""
-		levelError = ""
 		out = os.Stderr
 	}
-	logger = log.New(out, "", log.Lshortfile|log.Ltime)
+	logger = log.New(out, "", 0)
 }
 
 type level string
 
-func (p level) format(f *FileLocate) string {
-	fStr := f.String()
-	if len(p) == 0 {
-		if len(fStr) == 0 {
-			return ""
+func (l level) format(lc Loc) string {
+	loc := lc.String()
+	if !goaction.CI {
+		if len(loc) > 0 {
+			loc = loc + ": "
 		}
-		return fStr + ":"
+		return loc
 	}
-	if len(fStr) > 0 {
-		fStr = " " + fStr
+	if len(loc) > 0 {
+		loc = " " + loc
 	}
-	return fmt.Sprintf(string(p), fStr)
+	return fmt.Sprintf(string(l), loc)
 }
 
 // Printf logs a debug level message.
 func Printf(format string, args ...interface{}) {
-	PrintfFile(nil, format, args...)
+	PrintfFile(Loc{}, format, args...)
 }
 
 // Printf logs a debug level message with a file location.
-func PrintfFile(f *FileLocate, format string, args ...interface{}) {
+func PrintfFile(f Loc, format string, args ...interface{}) {
 	logger.Printf(levelDebug.format(f)+format, args...)
 }
 
 // Warnf logs a warning level message.
 func Warnf(format string, args ...interface{}) {
-	WarnfFile(nil, format, args...)
+	WarnfFile(Loc{}, format, args...)
 }
 
 // WarnfFile logs a warning level message with a file location.
-func WarnfFile(f *FileLocate, format string, args ...interface{}) {
+func WarnfFile(f Loc, format string, args ...interface{}) {
 	logger.Printf(levelWarn.format(f)+format, args...)
 }
 
 // Errorf logs an error level message.
 func Errorf(format string, args ...interface{}) {
-	ErrorfFile(nil, format, args...)
+	ErrorfFile(Loc{}, format, args...)
 }
 
 // ErrorfFile logs an error level message with a file location.
-func ErrorfFile(f *FileLocate, format string, args ...interface{}) {
+func ErrorfFile(f Loc, format string, args ...interface{}) {
 	logger.Printf(levelError.format(f)+format, args...)
 }
 
 // Fatalf logs an error level message, and fails the program.
 func Fatalf(format string, args ...interface{}) {
-	FatalfFile(nil, format, args...)
+	FatalfFile(Loc{}, format, args...)
 }
 
 // FatalfFile logs an error level message with a file location, and fails the program.
-func FatalfFile(f *FileLocate, format string, args ...interface{}) {
+func FatalfFile(f Loc, format string, args ...interface{}) {
 	logger.Fatalf(levelError.format(f)+format, args...)
 }
 
 // Fatal logs an error level message, and fails the program.
 func Fatal(v ...interface{}) {
-	FatalFile(nil, v...)
+	FatalFile(Loc{}, v...)
 }
 
 // FatalFile logs an error level message with a file location, and fails the program.
-func FatalFile(f *FileLocate, v ...interface{}) {
+func FatalFile(f Loc, v ...interface{}) {
 	logger.Fatal(append([]interface{}{levelError.format(f)}, v...)...)
 }
 
-// FileLocate provides file infromation for logging purposes.
-type FileLocate struct {
-	Path string
-	Line int
-	Col  int
+// Loc provides file location infromation for logging purposes.
+type Loc struct {
+	Path string // Path to file.
+	Line int    // Line in file.
+	Col  int    // Col is column in line.
 }
 
-func (f *FileLocate) String() string {
-	if f == nil {
+func (f Loc) String() string {
+	if f.Path == "" {
 		return ""
 	}
 	parts := []string{"file=" + f.Path}
