@@ -15,6 +15,8 @@ Required steps
 
 - [x] Tell me about it, I'll link it below.
 
+See simplest example for Goaction project: (posener/goaction-example) https://github.com/posener/goaction-example.
+
 Writing Action Go Script
 
 Create a Go project. Currently it must be using Go modules, and compilable with Go 1.14. The action
