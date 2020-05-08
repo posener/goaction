@@ -19,7 +19,7 @@ jobs:
         # Set CI=false to skip the CI flow of goaction.
         env:
           CI: false
-        run: go run ./cmd/goaction -path ./cmd/goaction/main.go
+        run: go run ./cmd/goaction -path ./cmd/goaction
       # Action files updated...
       # Contine goaction with the normal flow.
       - name: Update action files
@@ -27,7 +27,7 @@ jobs:
         with:
           name: posener/goaction
           description: Github actions for Go code
-          path: cmd/goaction/main.go
+          path: cmd/goaction
           github-token: '${{ secrets.GITHUB_TOKEN }}'
           icon: activity
           color: blue

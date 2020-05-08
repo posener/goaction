@@ -6,6 +6,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"go/ast"
 	"go/parser"
 	"go/token"
 	"io"
@@ -24,7 +25,7 @@ import (
 
 var (
 	//goaction:required
-	path    = flag.String("path", "", "Path to main Go file, this file should contain all defined flags and environment variables.")
+	path    = flag.String("path", "", "Path to main Go main package.")
 	name    = flag.String("name", "", "Override action name, the default name is the package name.")
 	desc    = flag.String("desc", "", "Override action description, the default description is the package synopsis.")
 	image   = flag.String("image", "golang:1.14.2-alpine3.11", "Override Docker image to run the action with (See https://hub.docker.com/_/golang?tab=tags).")
@@ -45,19 +46,27 @@ const (
 func main() {
 	flag.Parse()
 
-	if *path == "" {
-		log.Fatalf("Missing required flag 'path'")
-	}
-
 	// Load go code.
 	fset := token.NewFileSet()
-	f, err := parser.ParseFile(fset, *path, nil, parser.ParseComments)
+	pkgs, err := parser.ParseDir(fset, *path, nil, parser.ParseComments)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	// Get main package
+	var mainPkg *ast.Package
+	for name, pkg := range pkgs {
+		if name == "main" {
+			mainPkg = pkg
+			break
+		}
+	}
+	if mainPkg == nil {
+		log.Fatalf("No main package in path %q", *path)
+	}
+
 	// Parse Go code to Github actions metadata.
-	m, err := metadata.New(f)
+	m, err := metadata.New(mainPkg)
 	if err != nil {
 		// For parsing error, log the file location.
 		var pe metadata.ErrParse
@@ -189,8 +198,6 @@ func pathRelDir(path string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
-	path = filepath.Dir(path)
 
 	wd, err := os.Getwd()
 	if err != nil {

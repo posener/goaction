@@ -20,7 +20,7 @@ jobs:
     - name: Generate action files of prepare
       env:
         CI: false
-      run: /tmp/goaction -path ./.github/tests/prepare/main.go
+      run: /tmp/goaction -path ./.github/tests/prepare
     - id: prepare
       name: Prepare
       uses: ./
@@ -29,7 +29,7 @@ jobs:
     - name: Generate action files of prepare test-env-set
       env:
         CI: false
-      run: /tmp/goaction -path ./.github/tests/test-env-set/main.go
+      run: /tmp/goaction -path ./.github/tests/test-env-set
     - name: Test env-set
       uses: ./
   tests:
@@ -47,7 +47,7 @@ jobs:
     - name: Generate action files of test-input
       env:
         CI: false
-      run: /tmp/goaction -path ./.github/tests/test-input/main.go
+      run: /tmp/goaction -path ./.github/tests/test-input
     - name: Test input
       uses: ./
       with:

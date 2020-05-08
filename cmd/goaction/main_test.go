@@ -11,10 +11,10 @@ func TestPathRelDir(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct{ path, want string }{
-		{"main.go", "./"},
-		{"./main.go", "./"},
-		{"src/main.go", "./src"},
-		{"./src/main.go", "./src"},
+		{"", "./"},
+		{"./", "./"},
+		{"src/", "./src"},
+		{"./src/", "./src"},
 	}
 
 	for _, tt := range tests {

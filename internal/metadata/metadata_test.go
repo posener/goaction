@@ -1,6 +1,7 @@
 package metadata
 
 import (
+	"go/ast"
 	"go/parser"
 	"go/token"
 	"testing"
@@ -14,8 +15,8 @@ func TestNew(t *testing.T) {
 	t.Parallel()
 
 	code := `
-// Package inputs tests parsing of input calls.
-package inputs
+// Package main tests parsing of input calls.
+package main
 
 import (
 	"flag"
@@ -52,8 +53,8 @@ func main() {
 `
 
 	var want = Metadata{
-		Name: "inputs",
-		Desc: "\"Package inputs tests parsing of input calls.\"",
+		Name: "main",
+		Desc: "\"Package main tests parsing of input calls.\"",
 		Inputs: yaml.MapSlice{
 			{"string", Input{tp: inputFlag, Desc: "\"string usage\""}},
 			{"string-default", Input{tp: inputFlag, Default: "default", Desc: "\"string default usage\""}},
@@ -97,15 +98,15 @@ func main() {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, got, want)
+	assert.Equal(t, want, got)
 }
 
 // Tests cases of goaction:required comment.
-func TestNewRquired(t *testing.T) {
+func TestNewRequired(t *testing.T) {
 	t.Parallel()
 
 	code := `
-package dockstr
+package main
 
 import (
 	"flag"
@@ -160,7 +161,7 @@ var (
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, got.Inputs, wantInputs)
+	assert.Equal(t, wantInputs, got.Inputs)
 }
 
 // Tests cases of goaction:skip comment.
@@ -168,7 +169,7 @@ func TestNewSkip(t *testing.T) {
 	t.Parallel()
 
 	code := `
-package dockstr
+package main
 
 import (
 	"flag"
@@ -214,7 +215,7 @@ var (
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, got.Inputs, wantInputs)
+	assert.Equal(t, wantInputs, got.Inputs)
 }
 
 func TestMarshal(t *testing.T) {
@@ -274,5 +275,9 @@ func parse(code string) (Metadata, error) {
 	if err != nil {
 		return Metadata{}, err
 	}
-	return New(f)
+	pkg := &ast.Package{
+		Name:  "main",
+		Files: map[string]*ast.File{"main.go": f},
+	}
+	return New(pkg)
 }
