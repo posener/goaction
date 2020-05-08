@@ -47,7 +47,7 @@ In order to convert the repository to a Github action, goaction command line sho
 
 Goaction Github action keeps the Github action file updated according to the main Go file
 automatically. When a PR is made, goaction will post a review explaining what changes to expect.
-When a new commit is pushed, goreadme makes sure that the Github action files are updated if needed.
+When a new commit is pushed, Goaction makes sure that the Github action files are updated if needed.
 
 Add the following content to `.github/workflows/goaction.yml`
 
@@ -68,8 +68,8 @@ jobs:
       with:
         # Optional: required only for commenting on PRs.
         github-token: '${{ secrets.GITHUB_TOKEN }}'
-	# Optional: now that the script is a Github action, it is possible to run it in the
-	# workflow.
+    # Optional: now that the script is a Github action, it is possible to run it in the
+    # workflow.
     - name: Example
       uses: [./](./)
 ```
@@ -99,6 +99,10 @@ after slashes). They can only be set on a `var` definition. The following annota
 * `//goaction:required` - sets an input definition to be "required".
 
 * `//goaction:skip` - skips an input out output definition.
+
+* `//goaction:description <description>` - add description for `os.Getenv`.
+
+* `//goaction:default <value>` - add default value for `os.Getenv`.
 
 ## Using Goaction
 
