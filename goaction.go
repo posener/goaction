@@ -1,46 +1,46 @@
 /*
 Package goaction enables writing Github Actions in Go.
 
-The idea is - write a Go script one that you could also run with `go run`, and use it as Github
-action. This project will generate all the required files specifically for your script. Your script
-can also use this library in order to get workflow information.
+The idea is: write a standard Go script, one that works with `go run`, and use it as Github action.
+The script's inputs - flags and environment variables, are set though the Github action API. This
+project will generate all the required files for the script (This generation can be done
+automattically with Github action integration). The library also exposes neat API to get workflow
+information.
 
-Required steps
+Required Steps
 
-- [x] Create a script in Go.
+- [x] Write a Go script.
 
 - [x] Add `goaction` configuration in `.github/workflows/goaction.yml`.
 
-- [x] Push the project to Github
+- [x] Push the project to Github.
 
-- [x] Tell me about it, I'll link it below.
+See simplest example for a Goaction script: (posener/goaction-example) https://github.com/posener/goaction-example.
 
-See simplest example for Goaction project: (posener/goaction-example) https://github.com/posener/goaction-example.
+Writing a Goaction Script
 
-Writing Action Go Script
+Write Github Action by writing Go code! Just start a Go module with a main package, and execute it
+as a Github action using Goaction, or from the command line using `go run`.
 
-Create a Go project. Currently it must be using Go modules, and compilable with Go 1.14. The action
-script is simply a main package located somewhere in this project.
+A go executable can get inputs from the command line flag and from environment variables. Github
+actions should have a `action.yml` file that defines this API. Goaction bridges the gap by parsing
+the Go code and creating this file automatically for you.
 
-One limitation is that this main package should contain a main file, and this file must contain all
-the required inputs for this binary. This inputs are defined with the standard `flag` package for
-command line arguments, or by `os.Getenv` for environment variables (Optionally use
-`goaction.Getenv` to define default value and description to an environment variables).
+The main package inputs should be defined with the standard `flag` package for command line
+arguments, or by `os.Getenv` for environment variables. These inputs define the API of the program
+and `goaction` automatically detect them and creates the `action.yml` file from them.
 
-> These inputs define the API of the program. `goaction` automatically detect them and creates the
-> `action.yml` file from them.
-
-Additionally, goaction also provides a library that exposes all Github action envirnment in an
+Additionally, goaction also provides a library that exposes all Github action environment in an
 easy-to-use API. See the documentation for more information.
 
 Code segments which should run only in Github action (called "CI mode"), and not when the main
-package runs as a command line tool, should be protected by `if goaction.CI { ... }`.
+package runs as a command line tool, should be protected by a `if goaction.CI { ... }` block.
 
 Goaction Configuration
 
-In order to convert the repository to a Github action, goaction command line should run on the main
-Go file. This command can run manually (by ./cmd/goaction) but luckly `goaction` also comes as a
-Github action :-)
+In order to convert the repository to a Github action, goaction command line should run on the
+**"main file"** (described above). This command can run manually (by ./cmd/goaction) but luckily
+`goaction` also comes as a Github action :-)
 
 Goaction Github action keeps the Github action file updated according to the main Go file
 automatically. When a PR is made, goaction will post a review explaining what changes to expect.
@@ -66,6 +66,10 @@ Add the following content to `.github/workflows/goaction.yml`
 	        # Optional: required only for commenting on PRs.
 	        github-token: '${{ secrets.GITHUB_TOKEN }}'
 	        # Other inputs... see ./action.yml
+		# Optional: now that the script is a Github action, it is possible to run it in the
+		# workflow.
+	    - name: Example
+	      uses: ./
 
 Goaction Artifacts
 
@@ -81,7 +85,20 @@ container can also be built and tested manually:
 	$ docker build -t my-action .
 	$ docker run --rm my-action
 
+Annotations
+
+Goaction parses Go script file and looks for annotations that extends the information that exists in
+the function calls. Goaction annotations are a comments that start with `//goaction:` (no space
+after slashes). They can only be set on a `var` definition. The following annotations are available:
+
+* `//goaction:required` - sets an input definition to be "required".
+
+* `//goaction:skip` - skips an input out output definition.
+
 Using Goaction
+
+A list of projects which are using Goaction (please send a PR if your project uses goaction and does
+not appear her).
 
 * (posener/goreadme) http://github.com/posener/goreadme
 

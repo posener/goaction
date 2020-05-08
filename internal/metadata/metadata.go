@@ -65,10 +65,11 @@ type Runs struct {
 	Args  []string      `yaml:",omitempty"`
 }
 
-func New(f *ast.File) (Metadata, error) {
+func New(pkg *ast.Package) (Metadata, error) {
+	// pkgDoc := doc.New(pkg, "", doc.AllDecls)
 	m := Metadata{
-		Name: f.Name.Name,
-		Desc: strconv.Quote(doc.Synopsis(f.Doc.Text())),
+		Name: pkg.Name,
+		// Desc: strconv.Quote(doc.Synopsis(pkgDoc.Doc)),
 		Runs: Runs{
 			Using: "docker",
 			Image: "Dockerfile",
@@ -76,7 +77,7 @@ func New(f *ast.File) (Metadata, error) {
 	}
 
 	var err error
-	ast.Inspect(f, func(n ast.Node) bool {
+	ast.Inspect(pkg, func(n ast.Node) bool {
 		defer func() {
 			e := recover()
 			if e == nil {
@@ -116,6 +117,11 @@ func (m *Metadata) AddOutput(name string, out Output) {
 // Inspect might panic with `parseError` when parsing failed.
 func (m *Metadata) inspect(n ast.Node, d docStr) bool {
 	switch v := n.(type) {
+	case *ast.File:
+		if v.Doc != nil {
+			m.Desc = strconv.Quote(doc.Synopsis(v.Doc.Text()))
+		}
+		return true
 	case *ast.GenDecl:
 		// Decleration definition, catches "var ( ... )" segments.
 		m.inspectDecl(v, d)
