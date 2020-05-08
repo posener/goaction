@@ -62,10 +62,8 @@ Add the following content to `.github/workflows/goaction.yml`
 	    - name: Update action files
 	      uses: posener/goaction@v1
 	      with:
-	        path: <path to main file>.
 	        # Optional: required only for commenting on PRs.
 	        github-token: '${{ secrets.GITHUB_TOKEN }}'
-	        # Other inputs... see ./action.yml
 		# Optional: now that the script is a Github action, it is possible to run it in the
 		# workflow.
 	    - name: Example

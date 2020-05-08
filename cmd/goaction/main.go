@@ -25,7 +25,7 @@ import (
 
 var (
 	//goaction:required
-	path    = flag.String("path", "", "Path to main Go main package.")
+	path    = flag.String("path", ".", "Path to main Go main package.")
 	name    = flag.String("name", "", "Override action name, the default name is the package name.")
 	desc    = flag.String("desc", "", "Override action description, the default description is the package synopsis.")
 	image   = flag.String("image", "golang:1.14.2-alpine3.11", "Override Docker image to run the action with (See https://hub.docker.com/_/golang?tab=tags).")
@@ -53,7 +53,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// Get main package
+	// Get main package.
 	var mainPkg *ast.Package
 	for name, pkg := range pkgs {
 		if name == "main" {
