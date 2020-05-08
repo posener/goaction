@@ -4,7 +4,6 @@ import (
 	"flag"
 	"os"
 
-	"github.com/posener/goaction"
 	"github.com/posener/goaction/log"
 )
 
@@ -28,13 +27,9 @@ func main() {
 		errorf(`flag.Int("arg") = %d, want %d`, got, want)
 	}
 
-	if got, want := goaction.Getenv("env", "", ""), "env"; got != want {
-		errorf(`goaction.Getenv("env") = %s, want %s`, got, want)
-	}
-
 	// Test that the environment variable is not set with standard name:
-	if got, want := os.Getenv("os-env"), "os-env"; got != want {
-		errorf(`os.Getenv("os-env") = %s, want %s`, got, want)
+	if got, want := os.Getenv("env"), "env"; got != want {
+		errorf(`os.Getenv("env") = %s, want %s`, got, want)
 	}
 
 	if fail {

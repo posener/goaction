@@ -44,7 +44,7 @@ In order to convert the repository to a Github action, goaction command line sho
 
 Goaction Github action keeps the Github action file updated according to the main Go file
 automatically. When a PR is made, goaction will post a review explaining what changes to expect.
-When a new commit is pushed, goreadme makes sure that the Github action files are updated if needed.
+When a new commit is pushed, Goaction makes sure that the Github action files are updated if needed.
 
 Add the following content to `.github/workflows/goaction.yml`
 
@@ -64,8 +64,8 @@ Add the following content to `.github/workflows/goaction.yml`
 	      with:
 	        # Optional: required only for commenting on PRs.
 	        github-token: '${{ secrets.GITHUB_TOKEN }}'
-		# Optional: now that the script is a Github action, it is possible to run it in the
-		# workflow.
+	    # Optional: now that the script is a Github action, it is possible to run it in the
+	    # workflow.
 	    - name: Example
 	      uses: ./
 
@@ -92,6 +92,10 @@ after slashes). They can only be set on a `var` definition. The following annota
 * `//goaction:required` - sets an input definition to be "required".
 
 * `//goaction:skip` - skips an input out output definition.
+
+* `//goaction:description <description>` - add description for `os.Getenv`.
+
+* `//goaction:default <value>` - add default value for `os.Getenv`.
 
 Using Goaction
 
@@ -170,17 +174,6 @@ func init() {
 	}
 }
 
-// Getenv returns an environment variable for the requested name. On top of `os.Getenv` it enables
-// defining a default `value` and description for the github action input section.
-func Getenv(name string, value string, desc string) string {
-	v := os.Getenv(name)
-	// If empty, return default value.
-	if v == "" {
-		return value
-	}
-	return v
-}
-
 // Setenv sets an environment variable that will only be visible for all following Github actions in
 // the current workflow, but not in the current action.
 // See https://help.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-environment-variable.
@@ -194,7 +187,7 @@ func Setenv(name string, value string) {
 }
 
 // Export sets an environment variable that will also be visible for all following Github actions in
-// the current worflow.
+// the current workflow.
 func Export(name string, value string) error {
 	err := os.Setenv(name, value)
 	if err != nil {

@@ -4,6 +4,7 @@ import (
 	"go/ast"
 	"go/parser"
 	"go/token"
+	"strings"
 	"testing"
 
 	"github.com/goccy/go-yaml"
@@ -31,8 +32,7 @@ var (
 	_ = flag.Bool("bool-true", true, "bool true usage")
 	_ = flag.Bool("bool-false", false, "bool false usage")
 
-	_ = goaction.Getenv("env", "default", "env usage")
-	_ = os.Getenv("os-env")
+	_ = os.Getenv("env")
 
 	s string
 	i int
@@ -48,7 +48,7 @@ func init() {
 }
 
 func main() {
-	goaction.Output("out", "value", "out description")
+	goaction.Output("out", "value", "output description")
 }
 `
 
@@ -61,8 +61,7 @@ func main() {
 			{"int", Input{tp: inputFlag, Default: 1, Desc: "\"int usage\""}},
 			{"bool-true", Input{tp: inputFlag, Default: true, Desc: "\"bool true usage\""}},
 			{"bool-false", Input{tp: inputFlag, Default: false, Desc: "\"bool false usage\""}},
-			{"env", Input{tp: inputEnv, Default: "default", Desc: "\"env usage\""}},
-			{"os-env", Input{tp: inputEnv}},
+			{"env", Input{tp: inputEnv}},
 			{"string-var", Input{tp: inputFlag, Desc: "\"string var usage\""}},
 			{"string-var-default", Input{tp: inputFlag, Default: "default", Desc: "\"string var default usage\""}},
 			{"int-var", Input{tp: inputFlag, Default: 0, Desc: "\"int var usage\""}},
@@ -70,7 +69,7 @@ func main() {
 			{"bool-var-false", Input{tp: inputFlag, Default: false, Desc: "\"bool var false usage\""}},
 		},
 		Outputs: yaml.MapSlice{
-			{"out", Output{Desc: "\"out description\""}},
+			{"out", Output{Desc: "\"output description\""}},
 		},
 		Runs: Runs{
 			Using: "docker",
@@ -89,7 +88,6 @@ func main() {
 			},
 			Env: yaml.MapSlice{
 				{"env", "\"${{ inputs.env }}\""},
-				{"os-env", "\"${{ inputs.os-env }}\""},
 			},
 		},
 	}
@@ -139,9 +137,7 @@ var (
 var (
 	// Test environment variable required and description.
 	//goaction:required
-	_ = goaction.Getenv("env", "", "env")
-	//goaction:required
-	_ = os.Getenv("os-env")
+	_ = os.Getenv("env")
 )
 `
 
@@ -153,8 +149,36 @@ var (
 		{"var", Input{tp: inputFlag, Desc: "\"var\"", Required: true}},
 		{"block1", Input{tp: inputFlag, Desc: "\"block1\"", Required: true}},
 		{"block2", Input{tp: inputFlag, Desc: "\"block2\"", Required: true}},
-		{"env", Input{tp: inputEnv, Desc: "\"env\"", Required: true}},
-		{"os-env", Input{tp: inputEnv, Required: true}},
+		{"env", Input{tp: inputEnv, Required: true}},
+	}
+
+	got, err := parse(code)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, wantInputs, got.Inputs)
+}
+
+func TestNewDefaultDesc(t *testing.T) {
+	t.Parallel()
+
+	code := `
+package main
+
+import (
+	"flag"
+	"os"
+	"github.com/posener/goaction"
+)
+
+// Test environment variable required and description.
+//goaction:default default
+//goaction:description input from environment variable
+var	_ = os.Getenv("env")
+`
+
+	var wantInputs = yaml.MapSlice{
+		{"env", Input{tp: inputEnv, Default: "default", Desc: "\"input from environment variable\""}},
 	}
 
 	got, err := parse(code)
@@ -201,9 +225,7 @@ var (
 var (
 	// Test environment variable required and description.
 	//goaction:skip
-	_ = goaction.Getenv("env", "", "env")
-	//goaction:skip
-	_ = os.Getenv("os-env")
+	_ = os.Getenv("env")
 )
 `
 
@@ -216,6 +238,34 @@ var (
 		t.Fatal(err)
 	}
 	assert.Equal(t, wantInputs, got.Inputs)
+}
+
+func TestNewInvalidAnnotations(t *testing.T) {
+	t.Parallel()
+
+	codes := []string{
+		`
+package main
+import "flag"
+
+//goaction:description description
+var _ = flag.String("simple1", "", "simple1")
+`,
+		`
+package main
+import "flag"
+
+//goaction:default default
+var _ = flag.String("simple1", "", "simple1")
+`,
+	}
+
+	for _, code := range codes {
+		t.Run(code, func(t *testing.T) {
+			_, err := parse(strings.TrimSpace(code))
+			assert.Error(t, err)
+		})
+	}
 }
 
 func TestMarshal(t *testing.T) {
