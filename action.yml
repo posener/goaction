@@ -4,7 +4,7 @@ name: posener/goaction
 description: "Creates action files for Go code"
 inputs:
   path:
-    description: "Path to main Go file, this file should contain all defined flags and environment variables."
+    description: "Path to main Go main package."
     required: true
   name:
     description: "Override action name, the default name is the package name."
