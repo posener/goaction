@@ -54,4 +54,3 @@ jobs:
         message: ${{ needs.prepare.outputs.out }}
         arg: 42
         env: env
-        os-env: os-env

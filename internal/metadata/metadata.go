@@ -9,14 +9,12 @@ import (
 	"strconv"
 
 	"github.com/goccy/go-yaml"
+	"github.com/posener/goaction/internal/comments"
 )
 
 const (
 	inputFlag = "flag"
 	inputEnv  = "env"
-
-	docRequired = "//goaction:required"
-	docSkip     = "//goaction:skip"
 )
 
 type ErrParse struct {
@@ -89,7 +87,7 @@ func New(pkg *ast.Package) (Metadata, error) {
 				panic(e)
 			}
 		}()
-		return m.inspect(n, docStr{})
+		return m.inspect(n, comments.Comments{})
 	})
 	if err != nil {
 		return m, err
@@ -115,7 +113,7 @@ func (m *Metadata) AddOutput(name string, out Output) {
 }
 
 // Inspect might panic with `parseError` when parsing failed.
-func (m *Metadata) inspect(n ast.Node, d docStr) bool {
+func (m *Metadata) inspect(n ast.Node, d comments.Comments) bool {
 	switch v := n.(type) {
 	case *ast.File:
 		if v.Doc != nil {
@@ -137,13 +135,13 @@ func (m *Metadata) inspect(n ast.Node, d docStr) bool {
 	return true
 }
 
-func (m *Metadata) inspectDecl(decl *ast.GenDecl, d docStr) {
+func (m *Metadata) inspectDecl(decl *ast.GenDecl, d comments.Comments) {
 	// Decleration can be IMPORT, CONST, TYPE, VAR. We are only interested in VAR.
 	if decl.Tok != token.VAR {
 		return
 	}
-	d.parse(decl.Doc)
-	if d.skip {
+	d.Parse(decl.Doc)
+	if d.Skip.Value {
 		return
 	}
 	for _, spec := range decl.Specs {
@@ -151,9 +149,9 @@ func (m *Metadata) inspectDecl(decl *ast.GenDecl, d docStr) {
 	}
 }
 
-func (m *Metadata) inspectValue(value *ast.ValueSpec, d docStr) {
-	d.parse(value.Doc)
-	if d.skip {
+func (m *Metadata) inspectValue(value *ast.ValueSpec, d comments.Comments) {
+	d.Parse(value.Doc)
+	if d.Skip.Value {
 		return
 	}
 	for _, v := range value.Values {
@@ -165,7 +163,7 @@ func (m *Metadata) inspectValue(value *ast.ValueSpec, d docStr) {
 	}
 }
 
-func (m *Metadata) inspectCall(call *ast.CallExpr, d docStr) {
+func (m *Metadata) inspectCall(call *ast.CallExpr, d comments.Comments) {
 	selector, ok := call.Fun.(*ast.SelectorExpr)
 	if !ok {
 		return
@@ -178,76 +176,83 @@ func (m *Metadata) inspectCall(call *ast.CallExpr, d docStr) {
 	default:
 		return
 	case "flag.String":
+		checkNotSet(d.Default, "flag.String", "default")
+		checkNotSet(d.Desc, "flag.String", "description")
 		m.AddInput(
 			unqoute(stringValue(call.Args[0])),
 			Input{
 				Default:  omitEmpty(unqoute(stringValue(call.Args[1]))),
 				Desc:     stringValue(call.Args[2]),
-				Required: d.required,
+				Required: d.Required.Value,
 				tp:       inputFlag,
 			})
 	case "flag.StringVar":
+		checkNotSet(d.Default, "flag.StringVar", "default")
+		checkNotSet(d.Desc, "flag.StringVar", "description")
 		m.AddInput(
 			unqoute(stringValue(call.Args[1])),
 			Input{
 				Default:  omitEmpty(unqoute(stringValue(call.Args[2]))),
 				Desc:     stringValue(call.Args[3]),
-				Required: d.required,
+				Required: d.Required.Value,
 				tp:       inputFlag,
 			})
 	case "flag.Int":
+		checkNotSet(d.Default, "flag.Int", "default")
+		checkNotSet(d.Desc, "flag.Int", "description")
 		m.AddInput(
 			unqoute(stringValue(call.Args[0])),
 			Input{
 				Default:  intValue(call.Args[1]),
 				Desc:     stringValue(call.Args[2]),
-				Required: d.required,
+				Required: d.Required.Value,
 				tp:       inputFlag,
 			})
 	case "flag.IntVar":
+		checkNotSet(d.Default, "flag.IntVar", "default")
+		checkNotSet(d.Desc, "flag.IntVar", "description")
 		m.AddInput(
 			unqoute(stringValue(call.Args[1])),
 			Input{
 				Default:  intValue(call.Args[2]),
 				Desc:     stringValue(call.Args[3]),
-				Required: d.required,
+				Required: d.Required.Value,
 				tp:       inputFlag,
 			})
 	case "flag.Bool":
+		checkNotSet(d.Default, "flag.Bool", "default")
+		checkNotSet(d.Desc, "flag.Bool", "description")
 		m.AddInput(
 			unqoute(stringValue(call.Args[0])),
 			Input{
 				Default:  boolValue(call.Args[1]),
 				Desc:     stringValue(call.Args[2]),
-				Required: d.required,
+				Required: d.Required.Value,
 				tp:       inputFlag,
 			})
 	case "flag.BoolVar":
+		checkNotSet(d.Default, "flag.BoolVar", "default")
+		checkNotSet(d.Desc, "flag.BoolVar", "description")
 		m.AddInput(
 			unqoute(stringValue(call.Args[1])),
 			Input{
 				Default:  boolValue(call.Args[2]),
 				Desc:     stringValue(call.Args[3]),
-				Required: d.required,
+				Required: d.Required.Value,
 				tp:       inputFlag,
 			})
 	case "os.Getenv":
 		m.AddInput(
 			unqoute(stringValue(call.Args[0])),
 			Input{
-				Required: d.required,
-				tp:       inputEnv,
-			})
-	case "goaction.Getenv":
-		m.AddInput(
-			unqoute(stringValue(call.Args[0])),
-			Input{
-				Default:  omitEmpty(unqoute(stringValue(call.Args[1]))),
-				Desc:     stringValue(call.Args[2]),
-				Required: d.required,
+				Default:  omitEmpty(d.Default.Value),
+				Desc:     d.Desc.Value,
+				Required: d.Required.Value,
 				tp:       inputEnv,
 			})
 	case "goaction.Output":
+		checkNotSet(d.Default, "goaction.Output", "default")
+		checkNotSet(d.Desc, "goaction.Output", "description")
 		m.AddOutput(
 			unqoute(stringValue(call.Args[0])),
 			Output{
@@ -312,27 +317,6 @@ func boolValue(e ast.Expr) bool {
 	return v
 }
 
-// doc holds information from doc string.
-type docStr struct {
-	required bool
-	skip     bool
-}
-
-// parseComment searches for a special doc is a comment group.
-func (d *docStr) parse(doc *ast.CommentGroup) {
-	if doc == nil {
-		return
-	}
-	for _, comment := range doc.List {
-		switch comment.Text {
-		case docRequired:
-			d.required = true
-		case docSkip:
-			d.skip = true
-		}
-	}
-}
-
 func name(e ast.Expr) string {
 	id, ok := e.(*ast.Ident)
 	if !ok {
@@ -354,4 +338,13 @@ func omitEmpty(s string) interface{} {
 		return nil
 	}
 	return s
+}
+
+func checkNotSet(s comments.String, fnName, commentName string) {
+	if s.Value != "" {
+		panic(ErrParse{
+			Pos:   s.Pos,
+			error: fmt.Errorf("%s can't have %s annotation", fnName, commentName),
+		})
+	}
 }

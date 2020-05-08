@@ -33,8 +33,11 @@ var (
 	icon    = flag.String("icon", "", "Set branding icon. (See options at https://feathericons.com).")
 	color   = flag.String("color", "", "Set branding color. (white, yellow, blue, green, orange, red, purple or gray-dark).")
 
-	email       = goaction.Getenv("email", "posener@gmail.com", "Email for commit message.")
-	githubToken = goaction.Getenv("github-token", "", "Github token for PR comments. Optional.")
+	//goaction:description Email for commit message.
+	//goaction:default posener@gmail.com
+	email = os.Getenv("email")
+	//goaction:description Github token for PR comments. Optional.
+	githubToken = os.Getenv("github-token")
 )
 
 const (
