@@ -4,6 +4,7 @@ name: posener/goaction
 description: "Creates action files for Go code"
 inputs:
   path:
+    default: .
     description: "Path to main Go main package."
     required: true
   name:
