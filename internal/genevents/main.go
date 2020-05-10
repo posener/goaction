@@ -3,15 +3,12 @@ package main
 
 import (
 	"log"
-	"os"
-	"path/filepath"
 	"strings"
-	"text/template"
 
-	"github.com/posener/script"
+	"github.com/posener/autogen"
 )
 
-const tmplGlob = "internal/genevents/*.go.gotmpl"
+//go:generate go run .
 
 type event struct {
 	Name             string
@@ -66,33 +63,9 @@ var events = []event{
 	{Name: "repository_dispatch"},
 }
 
-var tmpl = template.Must(template.ParseGlob(tmplGlob))
-
 func main() {
-	for _, t := range tmpl.Templates() {
-		out := outFileName(t.Name())
-		f, err := os.Create(out)
-		if err != nil {
-			panic(err)
-		}
-		defer f.Close()
-
-		log.Printf("Writing %s", out)
-		err = t.Execute(f, events)
-		if err != nil {
-			panic(err)
-		}
-
-		// Format the file.
-		err = script.ExecHandleStderr(os.Stderr, "goimports", "-w", out).ToStdout()
-		if err != nil {
-			panic(err)
-		}
+	err := autogen.Execute(events, autogen.Location(autogen.ModulePath))
+	if err != nil {
+		log.Fatal(err)
 	}
-}
-
-func outFileName(templateName string) string {
-	name := filepath.Base(templateName)
-	// Remove .gotmpl suffix.
-	return name[:strings.LastIndex(name, ".")]
 }
