@@ -1,0 +1,40 @@
+package actionutil
+
+import (
+	"context"
+	"net/http"
+	
+	"golang.org/x/oauth2"
+	"github.com/posener/goaction"
+	"github.com/google/go-github/v31/github"
+)
+
+// Client is a small wrapper around github.Client, that does not require to repeatedly type the
+// owner and repository in various function calls.
+type Client struct {
+	*github.Client
+	Owner string
+	Project string
+}
+
+// NewClient returns a github client.
+func NewClient(c *http.Client) *Client {
+	return &Client{
+		Client:  github.NewClient(c),
+		Owner:   goaction.Owner(),
+		Project: goaction.Project(),
+	}
+}
+
+// NewClientWithToken returns a github client from a given auth token, according to
+// https://github.com/google/go-github#authentication.
+func NewClientWithToken(ctx context.Context, token string) *Client {
+	ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
+	return NewClient(oauth2.NewClient(ctx, ts))
+}
+
+{{ range . }}
+func (c *Client) {{ .Field.Name }}{{ .Method.Name }}(ctx context.Context, {{ .OtherParamsDefinition }}) {{ .ResultsDefinition }} {
+	return c.{{ .Field.Name }}.{{ .Method.Name }}(ctx, c.Owner, c.Project, {{ .OtherParamsUse }})
+}
+{{ end }}
