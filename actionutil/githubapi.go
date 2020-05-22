@@ -39,1098 +39,1646 @@ func NewClientWithToken(ctx context.Context, token string) *Client {
 	return NewClient(oauth2.NewClient(ctx, ts))
 }
 
+// ActionsListWorkflowRunArtifacts calls the Actions.ListWorkflowRunArtifacts method with
+// the relevant owner and repo arguments.
 func (c *Client) ActionsListWorkflowRunArtifacts(ctx context.Context, runID int64, opts *github.ListOptions) (*github.ArtifactList, *github.Response, error) {
 	return c.Actions.ListWorkflowRunArtifacts(ctx, c.Owner, c.Project, runID, opts)
 }
 
+// ActionsGetArtifact calls the Actions.GetArtifact method with
+// the relevant owner and repo arguments.
 func (c *Client) ActionsGetArtifact(ctx context.Context, artifactID int64) (*github.Artifact, *github.Response, error) {
 	return c.Actions.GetArtifact(ctx, c.Owner, c.Project, artifactID)
 }
 
+// ActionsDownloadArtifact calls the Actions.DownloadArtifact method with
+// the relevant owner and repo arguments.
 func (c *Client) ActionsDownloadArtifact(ctx context.Context, artifactID int64, followRedirects bool) (*url.URL, *github.Response, error) {
 	return c.Actions.DownloadArtifact(ctx, c.Owner, c.Project, artifactID, followRedirects)
 }
 
+// ActionsDeleteArtifact calls the Actions.DeleteArtifact method with
+// the relevant owner and repo arguments.
 func (c *Client) ActionsDeleteArtifact(ctx context.Context, artifactID int64) (*github.Response, error) {
 	return c.Actions.DeleteArtifact(ctx, c.Owner, c.Project, artifactID)
 }
 
+// ActionsListRunnerApplicationDownloads calls the Actions.ListRunnerApplicationDownloads method with
+// the relevant owner and repo arguments.
 func (c *Client) ActionsListRunnerApplicationDownloads(ctx context.Context) ([]*github.RunnerApplicationDownload, *github.Response, error) {
 	return c.Actions.ListRunnerApplicationDownloads(ctx, c.Owner, c.Project)
 }
 
+// ActionsCreateRegistrationToken calls the Actions.CreateRegistrationToken method with
+// the relevant owner and repo arguments.
 func (c *Client) ActionsCreateRegistrationToken(ctx context.Context) (*github.RegistrationToken, *github.Response, error) {
 	return c.Actions.CreateRegistrationToken(ctx, c.Owner, c.Project)
 }
 
+// ActionsListRunners calls the Actions.ListRunners method with
+// the relevant owner and repo arguments.
 func (c *Client) ActionsListRunners(ctx context.Context, opts *github.ListOptions) (*github.Runners, *github.Response, error) {
 	return c.Actions.ListRunners(ctx, c.Owner, c.Project, opts)
 }
 
+// ActionsGetRunner calls the Actions.GetRunner method with
+// the relevant owner and repo arguments.
 func (c *Client) ActionsGetRunner(ctx context.Context, runnerID int64) (*github.Runner, *github.Response, error) {
 	return c.Actions.GetRunner(ctx, c.Owner, c.Project, runnerID)
 }
 
+// ActionsCreateRemoveToken calls the Actions.CreateRemoveToken method with
+// the relevant owner and repo arguments.
 func (c *Client) ActionsCreateRemoveToken(ctx context.Context) (*github.RemoveToken, *github.Response, error) {
 	return c.Actions.CreateRemoveToken(ctx, c.Owner, c.Project)
 }
 
+// ActionsRemoveRunner calls the Actions.RemoveRunner method with
+// the relevant owner and repo arguments.
 func (c *Client) ActionsRemoveRunner(ctx context.Context, runnerID int64) (*github.Response, error) {
 	return c.Actions.RemoveRunner(ctx, c.Owner, c.Project, runnerID)
 }
 
+// ActionsGetPublicKey calls the Actions.GetPublicKey method with
+// the relevant owner and repo arguments.
 func (c *Client) ActionsGetPublicKey(ctx context.Context) (*github.PublicKey, *github.Response, error) {
 	return c.Actions.GetPublicKey(ctx, c.Owner, c.Project)
 }
 
+// ActionsListSecrets calls the Actions.ListSecrets method with
+// the relevant owner and repo arguments.
 func (c *Client) ActionsListSecrets(ctx context.Context, opts *github.ListOptions) (*github.Secrets, *github.Response, error) {
 	return c.Actions.ListSecrets(ctx, c.Owner, c.Project, opts)
 }
 
+// ActionsGetSecret calls the Actions.GetSecret method with
+// the relevant owner and repo arguments.
 func (c *Client) ActionsGetSecret(ctx context.Context, name string) (*github.Secret, *github.Response, error) {
 	return c.Actions.GetSecret(ctx, c.Owner, c.Project, name)
 }
 
+// ActionsCreateOrUpdateSecret calls the Actions.CreateOrUpdateSecret method with
+// the relevant owner and repo arguments.
 func (c *Client) ActionsCreateOrUpdateSecret(ctx context.Context, eSecret *github.EncryptedSecret) (*github.Response, error) {
 	return c.Actions.CreateOrUpdateSecret(ctx, c.Owner, c.Project, eSecret)
 }
 
+// ActionsDeleteSecret calls the Actions.DeleteSecret method with
+// the relevant owner and repo arguments.
 func (c *Client) ActionsDeleteSecret(ctx context.Context, name string) (*github.Response, error) {
 	return c.Actions.DeleteSecret(ctx, c.Owner, c.Project, name)
 }
 
+// ActionsListWorkflowJobs calls the Actions.ListWorkflowJobs method with
+// the relevant owner and repo arguments.
 func (c *Client) ActionsListWorkflowJobs(ctx context.Context, runID int64, opts *github.ListWorkflowJobsOptions) (*github.Jobs, *github.Response, error) {
 	return c.Actions.ListWorkflowJobs(ctx, c.Owner, c.Project, runID, opts)
 }
 
+// ActionsGetWorkflowJobByID calls the Actions.GetWorkflowJobByID method with
+// the relevant owner and repo arguments.
 func (c *Client) ActionsGetWorkflowJobByID(ctx context.Context, jobID int64) (*github.WorkflowJob, *github.Response, error) {
 	return c.Actions.GetWorkflowJobByID(ctx, c.Owner, c.Project, jobID)
 }
 
+// ActionsGetWorkflowJobLogs calls the Actions.GetWorkflowJobLogs method with
+// the relevant owner and repo arguments.
 func (c *Client) ActionsGetWorkflowJobLogs(ctx context.Context, jobID int64, followRedirects bool) (*url.URL, *github.Response, error) {
 	return c.Actions.GetWorkflowJobLogs(ctx, c.Owner, c.Project, jobID, followRedirects)
 }
 
+// ActionsListWorkflowRunsByID calls the Actions.ListWorkflowRunsByID method with
+// the relevant owner and repo arguments.
 func (c *Client) ActionsListWorkflowRunsByID(ctx context.Context, workflowID int64, opts *github.ListWorkflowRunsOptions) (*github.WorkflowRuns, *github.Response, error) {
 	return c.Actions.ListWorkflowRunsByID(ctx, c.Owner, c.Project, workflowID, opts)
 }
 
+// ActionsListWorkflowRunsByFileName calls the Actions.ListWorkflowRunsByFileName method with
+// the relevant owner and repo arguments.
 func (c *Client) ActionsListWorkflowRunsByFileName(ctx context.Context, workflowFileName string, opts *github.ListWorkflowRunsOptions) (*github.WorkflowRuns, *github.Response, error) {
 	return c.Actions.ListWorkflowRunsByFileName(ctx, c.Owner, c.Project, workflowFileName, opts)
 }
 
+// ActionsListRepositoryWorkflowRuns calls the Actions.ListRepositoryWorkflowRuns method with
+// the relevant owner and repo arguments.
 func (c *Client) ActionsListRepositoryWorkflowRuns(ctx context.Context, opts *github.ListOptions) (*github.WorkflowRuns, *github.Response, error) {
 	return c.Actions.ListRepositoryWorkflowRuns(ctx, c.Owner, c.Project, opts)
 }
 
+// ActionsGetWorkflowRunByID calls the Actions.GetWorkflowRunByID method with
+// the relevant owner and repo arguments.
 func (c *Client) ActionsGetWorkflowRunByID(ctx context.Context, runID int64) (*github.WorkflowRun, *github.Response, error) {
 	return c.Actions.GetWorkflowRunByID(ctx, c.Owner, c.Project, runID)
 }
 
+// ActionsRerunWorkflowByID calls the Actions.RerunWorkflowByID method with
+// the relevant owner and repo arguments.
 func (c *Client) ActionsRerunWorkflowByID(ctx context.Context, runID int64) (*github.Response, error) {
 	return c.Actions.RerunWorkflowByID(ctx, c.Owner, c.Project, runID)
 }
 
+// ActionsCancelWorkflowRunByID calls the Actions.CancelWorkflowRunByID method with
+// the relevant owner and repo arguments.
 func (c *Client) ActionsCancelWorkflowRunByID(ctx context.Context, runID int64) (*github.Response, error) {
 	return c.Actions.CancelWorkflowRunByID(ctx, c.Owner, c.Project, runID)
 }
 
+// ActionsGetWorkflowRunLogs calls the Actions.GetWorkflowRunLogs method with
+// the relevant owner and repo arguments.
 func (c *Client) ActionsGetWorkflowRunLogs(ctx context.Context, runID int64, followRedirects bool) (*url.URL, *github.Response, error) {
 	return c.Actions.GetWorkflowRunLogs(ctx, c.Owner, c.Project, runID, followRedirects)
 }
 
+// ActionsListWorkflows calls the Actions.ListWorkflows method with
+// the relevant owner and repo arguments.
 func (c *Client) ActionsListWorkflows(ctx context.Context, opts *github.ListOptions) (*github.Workflows, *github.Response, error) {
 	return c.Actions.ListWorkflows(ctx, c.Owner, c.Project, opts)
 }
 
+// ActionsGetWorkflowByID calls the Actions.GetWorkflowByID method with
+// the relevant owner and repo arguments.
 func (c *Client) ActionsGetWorkflowByID(ctx context.Context, workflowID int64) (*github.Workflow, *github.Response, error) {
 	return c.Actions.GetWorkflowByID(ctx, c.Owner, c.Project, workflowID)
 }
 
+// ActionsGetWorkflowByFileName calls the Actions.GetWorkflowByFileName method with
+// the relevant owner and repo arguments.
 func (c *Client) ActionsGetWorkflowByFileName(ctx context.Context, workflowFileName string) (*github.Workflow, *github.Response, error) {
 	return c.Actions.GetWorkflowByFileName(ctx, c.Owner, c.Project, workflowFileName)
 }
 
+// ActivityListRepositoryEvents calls the Activity.ListRepositoryEvents method with
+// the relevant owner and repo arguments.
 func (c *Client) ActivityListRepositoryEvents(ctx context.Context, opts *github.ListOptions) ([]*github.Event, *github.Response, error) {
 	return c.Activity.ListRepositoryEvents(ctx, c.Owner, c.Project, opts)
 }
 
+// ActivityListIssueEventsForRepository calls the Activity.ListIssueEventsForRepository method with
+// the relevant owner and repo arguments.
 func (c *Client) ActivityListIssueEventsForRepository(ctx context.Context, opts *github.ListOptions) ([]*github.IssueEvent, *github.Response, error) {
 	return c.Activity.ListIssueEventsForRepository(ctx, c.Owner, c.Project, opts)
 }
 
+// ActivityListEventsForRepoNetwork calls the Activity.ListEventsForRepoNetwork method with
+// the relevant owner and repo arguments.
 func (c *Client) ActivityListEventsForRepoNetwork(ctx context.Context, opts *github.ListOptions) ([]*github.Event, *github.Response, error) {
 	return c.Activity.ListEventsForRepoNetwork(ctx, c.Owner, c.Project, opts)
 }
 
+// ActivityListRepositoryNotifications calls the Activity.ListRepositoryNotifications method with
+// the relevant owner and repo arguments.
 func (c *Client) ActivityListRepositoryNotifications(ctx context.Context, opts *github.NotificationListOptions) ([]*github.Notification, *github.Response, error) {
 	return c.Activity.ListRepositoryNotifications(ctx, c.Owner, c.Project, opts)
 }
 
+// ActivityMarkRepositoryNotificationsRead calls the Activity.MarkRepositoryNotificationsRead method with
+// the relevant owner and repo arguments.
 func (c *Client) ActivityMarkRepositoryNotificationsRead(ctx context.Context, lastRead time.Time) (*github.Response, error) {
 	return c.Activity.MarkRepositoryNotificationsRead(ctx, c.Owner, c.Project, lastRead)
 }
 
+// ActivityListStargazers calls the Activity.ListStargazers method with
+// the relevant owner and repo arguments.
 func (c *Client) ActivityListStargazers(ctx context.Context, opts *github.ListOptions) ([]*github.Stargazer, *github.Response, error) {
 	return c.Activity.ListStargazers(ctx, c.Owner, c.Project, opts)
 }
 
+// ActivityIsStarred calls the Activity.IsStarred method with
+// the relevant owner and repo arguments.
 func (c *Client) ActivityIsStarred(ctx context.Context) (bool, *github.Response, error) {
 	return c.Activity.IsStarred(ctx, c.Owner, c.Project)
 }
 
+// ActivityStar calls the Activity.Star method with
+// the relevant owner and repo arguments.
 func (c *Client) ActivityStar(ctx context.Context) (*github.Response, error) {
 	return c.Activity.Star(ctx, c.Owner, c.Project)
 }
 
+// ActivityUnstar calls the Activity.Unstar method with
+// the relevant owner and repo arguments.
 func (c *Client) ActivityUnstar(ctx context.Context) (*github.Response, error) {
 	return c.Activity.Unstar(ctx, c.Owner, c.Project)
 }
 
+// ActivityListWatchers calls the Activity.ListWatchers method with
+// the relevant owner and repo arguments.
 func (c *Client) ActivityListWatchers(ctx context.Context, opts *github.ListOptions) ([]*github.User, *github.Response, error) {
 	return c.Activity.ListWatchers(ctx, c.Owner, c.Project, opts)
 }
 
+// ActivityGetRepositorySubscription calls the Activity.GetRepositorySubscription method with
+// the relevant owner and repo arguments.
 func (c *Client) ActivityGetRepositorySubscription(ctx context.Context) (*github.Subscription, *github.Response, error) {
 	return c.Activity.GetRepositorySubscription(ctx, c.Owner, c.Project)
 }
 
+// ActivitySetRepositorySubscription calls the Activity.SetRepositorySubscription method with
+// the relevant owner and repo arguments.
 func (c *Client) ActivitySetRepositorySubscription(ctx context.Context, subscription *github.Subscription) (*github.Subscription, *github.Response, error) {
 	return c.Activity.SetRepositorySubscription(ctx, c.Owner, c.Project, subscription)
 }
 
+// ActivityDeleteRepositorySubscription calls the Activity.DeleteRepositorySubscription method with
+// the relevant owner and repo arguments.
 func (c *Client) ActivityDeleteRepositorySubscription(ctx context.Context) (*github.Response, error) {
 	return c.Activity.DeleteRepositorySubscription(ctx, c.Owner, c.Project)
 }
 
+// AppsFindRepositoryInstallation calls the Apps.FindRepositoryInstallation method with
+// the relevant owner and repo arguments.
 func (c *Client) AppsFindRepositoryInstallation(ctx context.Context) (*github.Installation, *github.Response, error) {
 	return c.Apps.FindRepositoryInstallation(ctx, c.Owner, c.Project)
 }
 
+// ChecksGetCheckRun calls the Checks.GetCheckRun method with
+// the relevant owner and repo arguments.
 func (c *Client) ChecksGetCheckRun(ctx context.Context, checkRunID int64) (*github.CheckRun, *github.Response, error) {
 	return c.Checks.GetCheckRun(ctx, c.Owner, c.Project, checkRunID)
 }
 
+// ChecksGetCheckSuite calls the Checks.GetCheckSuite method with
+// the relevant owner and repo arguments.
 func (c *Client) ChecksGetCheckSuite(ctx context.Context, checkSuiteID int64) (*github.CheckSuite, *github.Response, error) {
 	return c.Checks.GetCheckSuite(ctx, c.Owner, c.Project, checkSuiteID)
 }
 
+// ChecksCreateCheckRun calls the Checks.CreateCheckRun method with
+// the relevant owner and repo arguments.
 func (c *Client) ChecksCreateCheckRun(ctx context.Context, opts github.CreateCheckRunOptions) (*github.CheckRun, *github.Response, error) {
 	return c.Checks.CreateCheckRun(ctx, c.Owner, c.Project, opts)
 }
 
+// ChecksUpdateCheckRun calls the Checks.UpdateCheckRun method with
+// the relevant owner and repo arguments.
 func (c *Client) ChecksUpdateCheckRun(ctx context.Context, checkRunID int64, opts github.UpdateCheckRunOptions) (*github.CheckRun, *github.Response, error) {
 	return c.Checks.UpdateCheckRun(ctx, c.Owner, c.Project, checkRunID, opts)
 }
 
+// ChecksListCheckRunAnnotations calls the Checks.ListCheckRunAnnotations method with
+// the relevant owner and repo arguments.
 func (c *Client) ChecksListCheckRunAnnotations(ctx context.Context, checkRunID int64, opts *github.ListOptions) ([]*github.CheckRunAnnotation, *github.Response, error) {
 	return c.Checks.ListCheckRunAnnotations(ctx, c.Owner, c.Project, checkRunID, opts)
 }
 
+// ChecksListCheckRunsForRef calls the Checks.ListCheckRunsForRef method with
+// the relevant owner and repo arguments.
 func (c *Client) ChecksListCheckRunsForRef(ctx context.Context, ref string, opts *github.ListCheckRunsOptions) (*github.ListCheckRunsResults, *github.Response, error) {
 	return c.Checks.ListCheckRunsForRef(ctx, c.Owner, c.Project, ref, opts)
 }
 
+// ChecksListCheckRunsCheckSuite calls the Checks.ListCheckRunsCheckSuite method with
+// the relevant owner and repo arguments.
 func (c *Client) ChecksListCheckRunsCheckSuite(ctx context.Context, checkSuiteID int64, opts *github.ListCheckRunsOptions) (*github.ListCheckRunsResults, *github.Response, error) {
 	return c.Checks.ListCheckRunsCheckSuite(ctx, c.Owner, c.Project, checkSuiteID, opts)
 }
 
+// ChecksListCheckSuitesForRef calls the Checks.ListCheckSuitesForRef method with
+// the relevant owner and repo arguments.
 func (c *Client) ChecksListCheckSuitesForRef(ctx context.Context, ref string, opts *github.ListCheckSuiteOptions) (*github.ListCheckSuiteResults, *github.Response, error) {
 	return c.Checks.ListCheckSuitesForRef(ctx, c.Owner, c.Project, ref, opts)
 }
 
+// ChecksSetCheckSuitePreferences calls the Checks.SetCheckSuitePreferences method with
+// the relevant owner and repo arguments.
 func (c *Client) ChecksSetCheckSuitePreferences(ctx context.Context, opts github.CheckSuitePreferenceOptions) (*github.CheckSuitePreferenceResults, *github.Response, error) {
 	return c.Checks.SetCheckSuitePreferences(ctx, c.Owner, c.Project, opts)
 }
 
+// ChecksCreateCheckSuite calls the Checks.CreateCheckSuite method with
+// the relevant owner and repo arguments.
 func (c *Client) ChecksCreateCheckSuite(ctx context.Context, opts github.CreateCheckSuiteOptions) (*github.CheckSuite, *github.Response, error) {
 	return c.Checks.CreateCheckSuite(ctx, c.Owner, c.Project, opts)
 }
 
+// ChecksReRequestCheckSuite calls the Checks.ReRequestCheckSuite method with
+// the relevant owner and repo arguments.
 func (c *Client) ChecksReRequestCheckSuite(ctx context.Context, checkSuiteID int64) (*github.Response, error) {
 	return c.Checks.ReRequestCheckSuite(ctx, c.Owner, c.Project, checkSuiteID)
 }
 
+// GitGetBlob calls the Git.GetBlob method with
+// the relevant owner and repo arguments.
 func (c *Client) GitGetBlob(ctx context.Context, sha string) (*github.Blob, *github.Response, error) {
 	return c.Git.GetBlob(ctx, c.Owner, c.Project, sha)
 }
 
+// GitGetBlobRaw calls the Git.GetBlobRaw method with
+// the relevant owner and repo arguments.
 func (c *Client) GitGetBlobRaw(ctx context.Context, sha string) ([]byte, *github.Response, error) {
 	return c.Git.GetBlobRaw(ctx, c.Owner, c.Project, sha)
 }
 
+// GitCreateBlob calls the Git.CreateBlob method with
+// the relevant owner and repo arguments.
 func (c *Client) GitCreateBlob(ctx context.Context, blob *github.Blob) (*github.Blob, *github.Response, error) {
 	return c.Git.CreateBlob(ctx, c.Owner, c.Project, blob)
 }
 
+// GitGetCommit calls the Git.GetCommit method with
+// the relevant owner and repo arguments.
 func (c *Client) GitGetCommit(ctx context.Context, sha string) (*github.Commit, *github.Response, error) {
 	return c.Git.GetCommit(ctx, c.Owner, c.Project, sha)
 }
 
+// GitCreateCommit calls the Git.CreateCommit method with
+// the relevant owner and repo arguments.
 func (c *Client) GitCreateCommit(ctx context.Context, commit *github.Commit) (*github.Commit, *github.Response, error) {
 	return c.Git.CreateCommit(ctx, c.Owner, c.Project, commit)
 }
 
+// GitGetRef calls the Git.GetRef method with
+// the relevant owner and repo arguments.
 func (c *Client) GitGetRef(ctx context.Context, ref string) (*github.Reference, *github.Response, error) {
 	return c.Git.GetRef(ctx, c.Owner, c.Project, ref)
 }
 
+// GitGetRefs calls the Git.GetRefs method with
+// the relevant owner and repo arguments.
 func (c *Client) GitGetRefs(ctx context.Context, ref string) ([]*github.Reference, *github.Response, error) {
 	return c.Git.GetRefs(ctx, c.Owner, c.Project, ref)
 }
 
+// GitListRefs calls the Git.ListRefs method with
+// the relevant owner and repo arguments.
 func (c *Client) GitListRefs(ctx context.Context, opts *github.ReferenceListOptions) ([]*github.Reference, *github.Response, error) {
 	return c.Git.ListRefs(ctx, c.Owner, c.Project, opts)
 }
 
+// GitCreateRef calls the Git.CreateRef method with
+// the relevant owner and repo arguments.
 func (c *Client) GitCreateRef(ctx context.Context, ref *github.Reference) (*github.Reference, *github.Response, error) {
 	return c.Git.CreateRef(ctx, c.Owner, c.Project, ref)
 }
 
+// GitUpdateRef calls the Git.UpdateRef method with
+// the relevant owner and repo arguments.
 func (c *Client) GitUpdateRef(ctx context.Context, ref *github.Reference, force bool) (*github.Reference, *github.Response, error) {
 	return c.Git.UpdateRef(ctx, c.Owner, c.Project, ref, force)
 }
 
+// GitDeleteRef calls the Git.DeleteRef method with
+// the relevant owner and repo arguments.
 func (c *Client) GitDeleteRef(ctx context.Context, ref string) (*github.Response, error) {
 	return c.Git.DeleteRef(ctx, c.Owner, c.Project, ref)
 }
 
+// GitGetTag calls the Git.GetTag method with
+// the relevant owner and repo arguments.
 func (c *Client) GitGetTag(ctx context.Context, sha string) (*github.Tag, *github.Response, error) {
 	return c.Git.GetTag(ctx, c.Owner, c.Project, sha)
 }
 
+// GitCreateTag calls the Git.CreateTag method with
+// the relevant owner and repo arguments.
 func (c *Client) GitCreateTag(ctx context.Context, tag *github.Tag) (*github.Tag, *github.Response, error) {
 	return c.Git.CreateTag(ctx, c.Owner, c.Project, tag)
 }
 
+// GitGetTree calls the Git.GetTree method with
+// the relevant owner and repo arguments.
 func (c *Client) GitGetTree(ctx context.Context, sha string, recursive bool) (*github.Tree, *github.Response, error) {
 	return c.Git.GetTree(ctx, c.Owner, c.Project, sha, recursive)
 }
 
+// GitCreateTree calls the Git.CreateTree method with
+// the relevant owner and repo arguments.
 func (c *Client) GitCreateTree(ctx context.Context, baseTree string, entries []*github.TreeEntry) (*github.Tree, *github.Response, error) {
 	return c.Git.CreateTree(ctx, c.Owner, c.Project, baseTree, entries)
 }
 
+// InteractionsGetRestrictionsForRepo calls the Interactions.GetRestrictionsForRepo method with
+// the relevant owner and repo arguments.
 func (c *Client) InteractionsGetRestrictionsForRepo(ctx context.Context) (*github.InteractionRestriction, *github.Response, error) {
 	return c.Interactions.GetRestrictionsForRepo(ctx, c.Owner, c.Project)
 }
 
+// InteractionsUpdateRestrictionsForRepo calls the Interactions.UpdateRestrictionsForRepo method with
+// the relevant owner and repo arguments.
 func (c *Client) InteractionsUpdateRestrictionsForRepo(ctx context.Context, limit string) (*github.InteractionRestriction, *github.Response, error) {
 	return c.Interactions.UpdateRestrictionsForRepo(ctx, c.Owner, c.Project, limit)
 }
 
+// InteractionsRemoveRestrictionsFromRepo calls the Interactions.RemoveRestrictionsFromRepo method with
+// the relevant owner and repo arguments.
 func (c *Client) InteractionsRemoveRestrictionsFromRepo(ctx context.Context) (*github.Response, error) {
 	return c.Interactions.RemoveRestrictionsFromRepo(ctx, c.Owner, c.Project)
 }
 
+// IssuesListByRepo calls the Issues.ListByRepo method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesListByRepo(ctx context.Context, opts *github.IssueListByRepoOptions) ([]*github.Issue, *github.Response, error) {
 	return c.Issues.ListByRepo(ctx, c.Owner, c.Project, opts)
 }
 
+// IssuesGet calls the Issues.Get method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesGet(ctx context.Context, number int) (*github.Issue, *github.Response, error) {
 	return c.Issues.Get(ctx, c.Owner, c.Project, number)
 }
 
+// IssuesCreate calls the Issues.Create method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesCreate(ctx context.Context, issue *github.IssueRequest) (*github.Issue, *github.Response, error) {
 	return c.Issues.Create(ctx, c.Owner, c.Project, issue)
 }
 
+// IssuesEdit calls the Issues.Edit method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesEdit(ctx context.Context, number int, issue *github.IssueRequest) (*github.Issue, *github.Response, error) {
 	return c.Issues.Edit(ctx, c.Owner, c.Project, number, issue)
 }
 
+// IssuesLock calls the Issues.Lock method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesLock(ctx context.Context, number int, opts *github.LockIssueOptions) (*github.Response, error) {
 	return c.Issues.Lock(ctx, c.Owner, c.Project, number, opts)
 }
 
+// IssuesUnlock calls the Issues.Unlock method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesUnlock(ctx context.Context, number int) (*github.Response, error) {
 	return c.Issues.Unlock(ctx, c.Owner, c.Project, number)
 }
 
+// IssuesListAssignees calls the Issues.ListAssignees method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesListAssignees(ctx context.Context, opts *github.ListOptions) ([]*github.User, *github.Response, error) {
 	return c.Issues.ListAssignees(ctx, c.Owner, c.Project, opts)
 }
 
+// IssuesIsAssignee calls the Issues.IsAssignee method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesIsAssignee(ctx context.Context, user string) (bool, *github.Response, error) {
 	return c.Issues.IsAssignee(ctx, c.Owner, c.Project, user)
 }
 
+// IssuesAddAssignees calls the Issues.AddAssignees method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesAddAssignees(ctx context.Context, number int, assignees []string) (*github.Issue, *github.Response, error) {
 	return c.Issues.AddAssignees(ctx, c.Owner, c.Project, number, assignees)
 }
 
+// IssuesRemoveAssignees calls the Issues.RemoveAssignees method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesRemoveAssignees(ctx context.Context, number int, assignees []string) (*github.Issue, *github.Response, error) {
 	return c.Issues.RemoveAssignees(ctx, c.Owner, c.Project, number, assignees)
 }
 
+// IssuesListComments calls the Issues.ListComments method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesListComments(ctx context.Context, number int, opts *github.IssueListCommentsOptions) ([]*github.IssueComment, *github.Response, error) {
 	return c.Issues.ListComments(ctx, c.Owner, c.Project, number, opts)
 }
 
+// IssuesGetComment calls the Issues.GetComment method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesGetComment(ctx context.Context, commentID int64) (*github.IssueComment, *github.Response, error) {
 	return c.Issues.GetComment(ctx, c.Owner, c.Project, commentID)
 }
 
+// IssuesCreateComment calls the Issues.CreateComment method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesCreateComment(ctx context.Context, number int, comment *github.IssueComment) (*github.IssueComment, *github.Response, error) {
 	return c.Issues.CreateComment(ctx, c.Owner, c.Project, number, comment)
 }
 
+// IssuesEditComment calls the Issues.EditComment method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesEditComment(ctx context.Context, commentID int64, comment *github.IssueComment) (*github.IssueComment, *github.Response, error) {
 	return c.Issues.EditComment(ctx, c.Owner, c.Project, commentID, comment)
 }
 
+// IssuesDeleteComment calls the Issues.DeleteComment method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesDeleteComment(ctx context.Context, commentID int64) (*github.Response, error) {
 	return c.Issues.DeleteComment(ctx, c.Owner, c.Project, commentID)
 }
 
+// IssuesListIssueEvents calls the Issues.ListIssueEvents method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesListIssueEvents(ctx context.Context, number int, opts *github.ListOptions) ([]*github.IssueEvent, *github.Response, error) {
 	return c.Issues.ListIssueEvents(ctx, c.Owner, c.Project, number, opts)
 }
 
+// IssuesListRepositoryEvents calls the Issues.ListRepositoryEvents method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesListRepositoryEvents(ctx context.Context, opts *github.ListOptions) ([]*github.IssueEvent, *github.Response, error) {
 	return c.Issues.ListRepositoryEvents(ctx, c.Owner, c.Project, opts)
 }
 
+// IssuesGetEvent calls the Issues.GetEvent method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesGetEvent(ctx context.Context, id int64) (*github.IssueEvent, *github.Response, error) {
 	return c.Issues.GetEvent(ctx, c.Owner, c.Project, id)
 }
 
+// IssuesListLabels calls the Issues.ListLabels method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesListLabels(ctx context.Context, opts *github.ListOptions) ([]*github.Label, *github.Response, error) {
 	return c.Issues.ListLabels(ctx, c.Owner, c.Project, opts)
 }
 
+// IssuesGetLabel calls the Issues.GetLabel method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesGetLabel(ctx context.Context, name string) (*github.Label, *github.Response, error) {
 	return c.Issues.GetLabel(ctx, c.Owner, c.Project, name)
 }
 
+// IssuesCreateLabel calls the Issues.CreateLabel method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesCreateLabel(ctx context.Context, label *github.Label) (*github.Label, *github.Response, error) {
 	return c.Issues.CreateLabel(ctx, c.Owner, c.Project, label)
 }
 
+// IssuesEditLabel calls the Issues.EditLabel method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesEditLabel(ctx context.Context, name string, label *github.Label) (*github.Label, *github.Response, error) {
 	return c.Issues.EditLabel(ctx, c.Owner, c.Project, name, label)
 }
 
+// IssuesDeleteLabel calls the Issues.DeleteLabel method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesDeleteLabel(ctx context.Context, name string) (*github.Response, error) {
 	return c.Issues.DeleteLabel(ctx, c.Owner, c.Project, name)
 }
 
+// IssuesListLabelsByIssue calls the Issues.ListLabelsByIssue method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesListLabelsByIssue(ctx context.Context, number int, opts *github.ListOptions) ([]*github.Label, *github.Response, error) {
 	return c.Issues.ListLabelsByIssue(ctx, c.Owner, c.Project, number, opts)
 }
 
+// IssuesAddLabelsToIssue calls the Issues.AddLabelsToIssue method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesAddLabelsToIssue(ctx context.Context, number int, labels []string) ([]*github.Label, *github.Response, error) {
 	return c.Issues.AddLabelsToIssue(ctx, c.Owner, c.Project, number, labels)
 }
 
+// IssuesRemoveLabelForIssue calls the Issues.RemoveLabelForIssue method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesRemoveLabelForIssue(ctx context.Context, number int, label string) (*github.Response, error) {
 	return c.Issues.RemoveLabelForIssue(ctx, c.Owner, c.Project, number, label)
 }
 
+// IssuesReplaceLabelsForIssue calls the Issues.ReplaceLabelsForIssue method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesReplaceLabelsForIssue(ctx context.Context, number int, labels []string) ([]*github.Label, *github.Response, error) {
 	return c.Issues.ReplaceLabelsForIssue(ctx, c.Owner, c.Project, number, labels)
 }
 
+// IssuesRemoveLabelsForIssue calls the Issues.RemoveLabelsForIssue method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesRemoveLabelsForIssue(ctx context.Context, number int) (*github.Response, error) {
 	return c.Issues.RemoveLabelsForIssue(ctx, c.Owner, c.Project, number)
 }
 
+// IssuesListLabelsForMilestone calls the Issues.ListLabelsForMilestone method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesListLabelsForMilestone(ctx context.Context, number int, opts *github.ListOptions) ([]*github.Label, *github.Response, error) {
 	return c.Issues.ListLabelsForMilestone(ctx, c.Owner, c.Project, number, opts)
 }
 
+// IssuesListMilestones calls the Issues.ListMilestones method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesListMilestones(ctx context.Context, opts *github.MilestoneListOptions) ([]*github.Milestone, *github.Response, error) {
 	return c.Issues.ListMilestones(ctx, c.Owner, c.Project, opts)
 }
 
+// IssuesGetMilestone calls the Issues.GetMilestone method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesGetMilestone(ctx context.Context, number int) (*github.Milestone, *github.Response, error) {
 	return c.Issues.GetMilestone(ctx, c.Owner, c.Project, number)
 }
 
+// IssuesCreateMilestone calls the Issues.CreateMilestone method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesCreateMilestone(ctx context.Context, milestone *github.Milestone) (*github.Milestone, *github.Response, error) {
 	return c.Issues.CreateMilestone(ctx, c.Owner, c.Project, milestone)
 }
 
+// IssuesEditMilestone calls the Issues.EditMilestone method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesEditMilestone(ctx context.Context, number int, milestone *github.Milestone) (*github.Milestone, *github.Response, error) {
 	return c.Issues.EditMilestone(ctx, c.Owner, c.Project, number, milestone)
 }
 
+// IssuesDeleteMilestone calls the Issues.DeleteMilestone method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesDeleteMilestone(ctx context.Context, number int) (*github.Response, error) {
 	return c.Issues.DeleteMilestone(ctx, c.Owner, c.Project, number)
 }
 
+// IssuesListIssueTimeline calls the Issues.ListIssueTimeline method with
+// the relevant owner and repo arguments.
 func (c *Client) IssuesListIssueTimeline(ctx context.Context, number int, opts *github.ListOptions) ([]*github.Timeline, *github.Response, error) {
 	return c.Issues.ListIssueTimeline(ctx, c.Owner, c.Project, number, opts)
 }
 
+// MigrationsStartImport calls the Migrations.StartImport method with
+// the relevant owner and repo arguments.
 func (c *Client) MigrationsStartImport(ctx context.Context, in *github.Import) (*github.Import, *github.Response, error) {
 	return c.Migrations.StartImport(ctx, c.Owner, c.Project, in)
 }
 
+// MigrationsImportProgress calls the Migrations.ImportProgress method with
+// the relevant owner and repo arguments.
 func (c *Client) MigrationsImportProgress(ctx context.Context) (*github.Import, *github.Response, error) {
 	return c.Migrations.ImportProgress(ctx, c.Owner, c.Project)
 }
 
+// MigrationsUpdateImport calls the Migrations.UpdateImport method with
+// the relevant owner and repo arguments.
 func (c *Client) MigrationsUpdateImport(ctx context.Context, in *github.Import) (*github.Import, *github.Response, error) {
 	return c.Migrations.UpdateImport(ctx, c.Owner, c.Project, in)
 }
 
+// MigrationsCommitAuthors calls the Migrations.CommitAuthors method with
+// the relevant owner and repo arguments.
 func (c *Client) MigrationsCommitAuthors(ctx context.Context) ([]*github.SourceImportAuthor, *github.Response, error) {
 	return c.Migrations.CommitAuthors(ctx, c.Owner, c.Project)
 }
 
+// MigrationsMapCommitAuthor calls the Migrations.MapCommitAuthor method with
+// the relevant owner and repo arguments.
 func (c *Client) MigrationsMapCommitAuthor(ctx context.Context, id int64, author *github.SourceImportAuthor) (*github.SourceImportAuthor, *github.Response, error) {
 	return c.Migrations.MapCommitAuthor(ctx, c.Owner, c.Project, id, author)
 }
 
+// MigrationsSetLFSPreference calls the Migrations.SetLFSPreference method with
+// the relevant owner and repo arguments.
 func (c *Client) MigrationsSetLFSPreference(ctx context.Context, in *github.Import) (*github.Import, *github.Response, error) {
 	return c.Migrations.SetLFSPreference(ctx, c.Owner, c.Project, in)
 }
 
+// MigrationsLargeFiles calls the Migrations.LargeFiles method with
+// the relevant owner and repo arguments.
 func (c *Client) MigrationsLargeFiles(ctx context.Context) ([]*github.LargeFile, *github.Response, error) {
 	return c.Migrations.LargeFiles(ctx, c.Owner, c.Project)
 }
 
+// MigrationsCancelImport calls the Migrations.CancelImport method with
+// the relevant owner and repo arguments.
 func (c *Client) MigrationsCancelImport(ctx context.Context) (*github.Response, error) {
 	return c.Migrations.CancelImport(ctx, c.Owner, c.Project)
 }
 
+// PullRequestsList calls the PullRequests.List method with
+// the relevant owner and repo arguments.
 func (c *Client) PullRequestsList(ctx context.Context, opts *github.PullRequestListOptions) ([]*github.PullRequest, *github.Response, error) {
 	return c.PullRequests.List(ctx, c.Owner, c.Project, opts)
 }
 
+// PullRequestsListPullRequestsWithCommit calls the PullRequests.ListPullRequestsWithCommit method with
+// the relevant owner and repo arguments.
 func (c *Client) PullRequestsListPullRequestsWithCommit(ctx context.Context, sha string, opts *github.PullRequestListOptions) ([]*github.PullRequest, *github.Response, error) {
 	return c.PullRequests.ListPullRequestsWithCommit(ctx, c.Owner, c.Project, sha, opts)
 }
 
+// PullRequestsGet calls the PullRequests.Get method with
+// the relevant owner and repo arguments.
 func (c *Client) PullRequestsGet(ctx context.Context, number int) (*github.PullRequest, *github.Response, error) {
 	return c.PullRequests.Get(ctx, c.Owner, c.Project, number)
 }
 
+// PullRequestsGetRaw calls the PullRequests.GetRaw method with
+// the relevant owner and repo arguments.
 func (c *Client) PullRequestsGetRaw(ctx context.Context, number int, opts github.RawOptions) (string, *github.Response, error) {
 	return c.PullRequests.GetRaw(ctx, c.Owner, c.Project, number, opts)
 }
 
+// PullRequestsCreate calls the PullRequests.Create method with
+// the relevant owner and repo arguments.
 func (c *Client) PullRequestsCreate(ctx context.Context, pull *github.NewPullRequest) (*github.PullRequest, *github.Response, error) {
 	return c.PullRequests.Create(ctx, c.Owner, c.Project, pull)
 }
 
+// PullRequestsUpdateBranch calls the PullRequests.UpdateBranch method with
+// the relevant owner and repo arguments.
 func (c *Client) PullRequestsUpdateBranch(ctx context.Context, number int, opts *github.PullRequestBranchUpdateOptions) (*github.PullRequestBranchUpdateResponse, *github.Response, error) {
 	return c.PullRequests.UpdateBranch(ctx, c.Owner, c.Project, number, opts)
 }
 
+// PullRequestsEdit calls the PullRequests.Edit method with
+// the relevant owner and repo arguments.
 func (c *Client) PullRequestsEdit(ctx context.Context, number int, pull *github.PullRequest) (*github.PullRequest, *github.Response, error) {
 	return c.PullRequests.Edit(ctx, c.Owner, c.Project, number, pull)
 }
 
+// PullRequestsListCommits calls the PullRequests.ListCommits method with
+// the relevant owner and repo arguments.
 func (c *Client) PullRequestsListCommits(ctx context.Context, number int, opts *github.ListOptions) ([]*github.RepositoryCommit, *github.Response, error) {
 	return c.PullRequests.ListCommits(ctx, c.Owner, c.Project, number, opts)
 }
 
+// PullRequestsListFiles calls the PullRequests.ListFiles method with
+// the relevant owner and repo arguments.
 func (c *Client) PullRequestsListFiles(ctx context.Context, number int, opts *github.ListOptions) ([]*github.CommitFile, *github.Response, error) {
 	return c.PullRequests.ListFiles(ctx, c.Owner, c.Project, number, opts)
 }
 
+// PullRequestsIsMerged calls the PullRequests.IsMerged method with
+// the relevant owner and repo arguments.
 func (c *Client) PullRequestsIsMerged(ctx context.Context, number int) (bool, *github.Response, error) {
 	return c.PullRequests.IsMerged(ctx, c.Owner, c.Project, number)
 }
 
+// PullRequestsMerge calls the PullRequests.Merge method with
+// the relevant owner and repo arguments.
 func (c *Client) PullRequestsMerge(ctx context.Context, number int, commitMessage string, options *github.PullRequestOptions) (*github.PullRequestMergeResult, *github.Response, error) {
 	return c.PullRequests.Merge(ctx, c.Owner, c.Project, number, commitMessage, options)
 }
 
+// PullRequestsListComments calls the PullRequests.ListComments method with
+// the relevant owner and repo arguments.
 func (c *Client) PullRequestsListComments(ctx context.Context, number int, opts *github.PullRequestListCommentsOptions) ([]*github.PullRequestComment, *github.Response, error) {
 	return c.PullRequests.ListComments(ctx, c.Owner, c.Project, number, opts)
 }
 
+// PullRequestsGetComment calls the PullRequests.GetComment method with
+// the relevant owner and repo arguments.
 func (c *Client) PullRequestsGetComment(ctx context.Context, commentID int64) (*github.PullRequestComment, *github.Response, error) {
 	return c.PullRequests.GetComment(ctx, c.Owner, c.Project, commentID)
 }
 
+// PullRequestsCreateComment calls the PullRequests.CreateComment method with
+// the relevant owner and repo arguments.
 func (c *Client) PullRequestsCreateComment(ctx context.Context, number int, comment *github.PullRequestComment) (*github.PullRequestComment, *github.Response, error) {
 	return c.PullRequests.CreateComment(ctx, c.Owner, c.Project, number, comment)
 }
 
+// PullRequestsCreateCommentInReplyTo calls the PullRequests.CreateCommentInReplyTo method with
+// the relevant owner and repo arguments.
 func (c *Client) PullRequestsCreateCommentInReplyTo(ctx context.Context, number int, body string, commentID int64) (*github.PullRequestComment, *github.Response, error) {
 	return c.PullRequests.CreateCommentInReplyTo(ctx, c.Owner, c.Project, number, body, commentID)
 }
 
+// PullRequestsEditComment calls the PullRequests.EditComment method with
+// the relevant owner and repo arguments.
 func (c *Client) PullRequestsEditComment(ctx context.Context, commentID int64, comment *github.PullRequestComment) (*github.PullRequestComment, *github.Response, error) {
 	return c.PullRequests.EditComment(ctx, c.Owner, c.Project, commentID, comment)
 }
 
+// PullRequestsDeleteComment calls the PullRequests.DeleteComment method with
+// the relevant owner and repo arguments.
 func (c *Client) PullRequestsDeleteComment(ctx context.Context, commentID int64) (*github.Response, error) {
 	return c.PullRequests.DeleteComment(ctx, c.Owner, c.Project, commentID)
 }
 
+// PullRequestsRequestReviewers calls the PullRequests.RequestReviewers method with
+// the relevant owner and repo arguments.
 func (c *Client) PullRequestsRequestReviewers(ctx context.Context, number int, reviewers github.ReviewersRequest) (*github.PullRequest, *github.Response, error) {
 	return c.PullRequests.RequestReviewers(ctx, c.Owner, c.Project, number, reviewers)
 }
 
+// PullRequestsListReviewers calls the PullRequests.ListReviewers method with
+// the relevant owner and repo arguments.
 func (c *Client) PullRequestsListReviewers(ctx context.Context, number int, opts *github.ListOptions) (*github.Reviewers, *github.Response, error) {
 	return c.PullRequests.ListReviewers(ctx, c.Owner, c.Project, number, opts)
 }
 
+// PullRequestsRemoveReviewers calls the PullRequests.RemoveReviewers method with
+// the relevant owner and repo arguments.
 func (c *Client) PullRequestsRemoveReviewers(ctx context.Context, number int, reviewers github.ReviewersRequest) (*github.Response, error) {
 	return c.PullRequests.RemoveReviewers(ctx, c.Owner, c.Project, number, reviewers)
 }
 
+// PullRequestsListReviews calls the PullRequests.ListReviews method with
+// the relevant owner and repo arguments.
 func (c *Client) PullRequestsListReviews(ctx context.Context, number int, opts *github.ListOptions) ([]*github.PullRequestReview, *github.Response, error) {
 	return c.PullRequests.ListReviews(ctx, c.Owner, c.Project, number, opts)
 }
 
+// PullRequestsGetReview calls the PullRequests.GetReview method with
+// the relevant owner and repo arguments.
 func (c *Client) PullRequestsGetReview(ctx context.Context, number int, reviewID int64) (*github.PullRequestReview, *github.Response, error) {
 	return c.PullRequests.GetReview(ctx, c.Owner, c.Project, number, reviewID)
 }
 
+// PullRequestsDeletePendingReview calls the PullRequests.DeletePendingReview method with
+// the relevant owner and repo arguments.
 func (c *Client) PullRequestsDeletePendingReview(ctx context.Context, number int, reviewID int64) (*github.PullRequestReview, *github.Response, error) {
 	return c.PullRequests.DeletePendingReview(ctx, c.Owner, c.Project, number, reviewID)
 }
 
+// PullRequestsListReviewComments calls the PullRequests.ListReviewComments method with
+// the relevant owner and repo arguments.
 func (c *Client) PullRequestsListReviewComments(ctx context.Context, number int, reviewID int64, opts *github.ListOptions) ([]*github.PullRequestComment, *github.Response, error) {
 	return c.PullRequests.ListReviewComments(ctx, c.Owner, c.Project, number, reviewID, opts)
 }
 
+// PullRequestsCreateReview calls the PullRequests.CreateReview method with
+// the relevant owner and repo arguments.
 func (c *Client) PullRequestsCreateReview(ctx context.Context, number int, review *github.PullRequestReviewRequest) (*github.PullRequestReview, *github.Response, error) {
 	return c.PullRequests.CreateReview(ctx, c.Owner, c.Project, number, review)
 }
 
+// PullRequestsUpdateReview calls the PullRequests.UpdateReview method with
+// the relevant owner and repo arguments.
 func (c *Client) PullRequestsUpdateReview(ctx context.Context, number int, reviewID int64, body string) (*github.PullRequestReview, *github.Response, error) {
 	return c.PullRequests.UpdateReview(ctx, c.Owner, c.Project, number, reviewID, body)
 }
 
+// PullRequestsSubmitReview calls the PullRequests.SubmitReview method with
+// the relevant owner and repo arguments.
 func (c *Client) PullRequestsSubmitReview(ctx context.Context, number int, reviewID int64, review *github.PullRequestReviewRequest) (*github.PullRequestReview, *github.Response, error) {
 	return c.PullRequests.SubmitReview(ctx, c.Owner, c.Project, number, reviewID, review)
 }
 
+// PullRequestsDismissReview calls the PullRequests.DismissReview method with
+// the relevant owner and repo arguments.
 func (c *Client) PullRequestsDismissReview(ctx context.Context, number int, reviewID int64, review *github.PullRequestReviewDismissalRequest) (*github.PullRequestReview, *github.Response, error) {
 	return c.PullRequests.DismissReview(ctx, c.Owner, c.Project, number, reviewID, review)
 }
 
+// ReactionsListCommentReactions calls the Reactions.ListCommentReactions method with
+// the relevant owner and repo arguments.
 func (c *Client) ReactionsListCommentReactions(ctx context.Context, id int64, opts *github.ListCommentReactionOptions) ([]*github.Reaction, *github.Response, error) {
 	return c.Reactions.ListCommentReactions(ctx, c.Owner, c.Project, id, opts)
 }
 
+// ReactionsCreateCommentReaction calls the Reactions.CreateCommentReaction method with
+// the relevant owner and repo arguments.
 func (c *Client) ReactionsCreateCommentReaction(ctx context.Context, id int64, content string) (*github.Reaction, *github.Response, error) {
 	return c.Reactions.CreateCommentReaction(ctx, c.Owner, c.Project, id, content)
 }
 
+// ReactionsDeleteCommentReaction calls the Reactions.DeleteCommentReaction method with
+// the relevant owner and repo arguments.
 func (c *Client) ReactionsDeleteCommentReaction(ctx context.Context, commentID int64, reactionID int64) (*github.Response, error) {
 	return c.Reactions.DeleteCommentReaction(ctx, c.Owner, c.Project, commentID, reactionID)
 }
 
+// ReactionsListIssueReactions calls the Reactions.ListIssueReactions method with
+// the relevant owner and repo arguments.
 func (c *Client) ReactionsListIssueReactions(ctx context.Context, number int, opts *github.ListOptions) ([]*github.Reaction, *github.Response, error) {
 	return c.Reactions.ListIssueReactions(ctx, c.Owner, c.Project, number, opts)
 }
 
+// ReactionsCreateIssueReaction calls the Reactions.CreateIssueReaction method with
+// the relevant owner and repo arguments.
 func (c *Client) ReactionsCreateIssueReaction(ctx context.Context, number int, content string) (*github.Reaction, *github.Response, error) {
 	return c.Reactions.CreateIssueReaction(ctx, c.Owner, c.Project, number, content)
 }
 
+// ReactionsDeleteIssueReaction calls the Reactions.DeleteIssueReaction method with
+// the relevant owner and repo arguments.
 func (c *Client) ReactionsDeleteIssueReaction(ctx context.Context, issueNumber int, reactionID int64) (*github.Response, error) {
 	return c.Reactions.DeleteIssueReaction(ctx, c.Owner, c.Project, issueNumber, reactionID)
 }
 
+// ReactionsListIssueCommentReactions calls the Reactions.ListIssueCommentReactions method with
+// the relevant owner and repo arguments.
 func (c *Client) ReactionsListIssueCommentReactions(ctx context.Context, id int64, opts *github.ListOptions) ([]*github.Reaction, *github.Response, error) {
 	return c.Reactions.ListIssueCommentReactions(ctx, c.Owner, c.Project, id, opts)
 }
 
+// ReactionsCreateIssueCommentReaction calls the Reactions.CreateIssueCommentReaction method with
+// the relevant owner and repo arguments.
 func (c *Client) ReactionsCreateIssueCommentReaction(ctx context.Context, id int64, content string) (*github.Reaction, *github.Response, error) {
 	return c.Reactions.CreateIssueCommentReaction(ctx, c.Owner, c.Project, id, content)
 }
 
+// ReactionsDeleteIssueCommentReaction calls the Reactions.DeleteIssueCommentReaction method with
+// the relevant owner and repo arguments.
 func (c *Client) ReactionsDeleteIssueCommentReaction(ctx context.Context, commentID int64, reactionID int64) (*github.Response, error) {
 	return c.Reactions.DeleteIssueCommentReaction(ctx, c.Owner, c.Project, commentID, reactionID)
 }
 
+// ReactionsListPullRequestCommentReactions calls the Reactions.ListPullRequestCommentReactions method with
+// the relevant owner and repo arguments.
 func (c *Client) ReactionsListPullRequestCommentReactions(ctx context.Context, id int64, opts *github.ListOptions) ([]*github.Reaction, *github.Response, error) {
 	return c.Reactions.ListPullRequestCommentReactions(ctx, c.Owner, c.Project, id, opts)
 }
 
+// ReactionsCreatePullRequestCommentReaction calls the Reactions.CreatePullRequestCommentReaction method with
+// the relevant owner and repo arguments.
 func (c *Client) ReactionsCreatePullRequestCommentReaction(ctx context.Context, id int64, content string) (*github.Reaction, *github.Response, error) {
 	return c.Reactions.CreatePullRequestCommentReaction(ctx, c.Owner, c.Project, id, content)
 }
 
+// ReactionsDeletePullRequestCommentReaction calls the Reactions.DeletePullRequestCommentReaction method with
+// the relevant owner and repo arguments.
 func (c *Client) ReactionsDeletePullRequestCommentReaction(ctx context.Context, commentID int64, reactionID int64) (*github.Response, error) {
 	return c.Reactions.DeletePullRequestCommentReaction(ctx, c.Owner, c.Project, commentID, reactionID)
 }
 
+// RepositoriesGet calls the Repositories.Get method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesGet(ctx context.Context) (*github.Repository, *github.Response, error) {
 	return c.Repositories.Get(ctx, c.Owner, c.Project)
 }
 
+// RepositoriesGetCodeOfConduct calls the Repositories.GetCodeOfConduct method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesGetCodeOfConduct(ctx context.Context) (*github.CodeOfConduct, *github.Response, error) {
 	return c.Repositories.GetCodeOfConduct(ctx, c.Owner, c.Project)
 }
 
+// RepositoriesEdit calls the Repositories.Edit method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesEdit(ctx context.Context, repository *github.Repository) (*github.Repository, *github.Response, error) {
 	return c.Repositories.Edit(ctx, c.Owner, c.Project, repository)
 }
 
+// RepositoriesDelete calls the Repositories.Delete method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesDelete(ctx context.Context) (*github.Response, error) {
 	return c.Repositories.Delete(ctx, c.Owner, c.Project)
 }
 
+// RepositoriesListLanguages calls the Repositories.ListLanguages method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesListLanguages(ctx context.Context) (map[string]int, *github.Response, error) {
 	return c.Repositories.ListLanguages(ctx, c.Owner, c.Project)
 }
 
+// RepositoriesListTeams calls the Repositories.ListTeams method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesListTeams(ctx context.Context, opts *github.ListOptions) ([]*github.Team, *github.Response, error) {
 	return c.Repositories.ListTeams(ctx, c.Owner, c.Project, opts)
 }
 
+// RepositoriesListTags calls the Repositories.ListTags method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesListTags(ctx context.Context, opts *github.ListOptions) ([]*github.RepositoryTag, *github.Response, error) {
 	return c.Repositories.ListTags(ctx, c.Owner, c.Project, opts)
 }
 
+// RepositoriesListBranches calls the Repositories.ListBranches method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesListBranches(ctx context.Context, opts *github.BranchListOptions) ([]*github.Branch, *github.Response, error) {
 	return c.Repositories.ListBranches(ctx, c.Owner, c.Project, opts)
 }
 
+// RepositoriesGetBranch calls the Repositories.GetBranch method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesGetBranch(ctx context.Context, branch string) (*github.Branch, *github.Response, error) {
 	return c.Repositories.GetBranch(ctx, c.Owner, c.Project, branch)
 }
 
+// RepositoriesGetBranchProtection calls the Repositories.GetBranchProtection method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesGetBranchProtection(ctx context.Context, branch string) (*github.Protection, *github.Response, error) {
 	return c.Repositories.GetBranchProtection(ctx, c.Owner, c.Project, branch)
 }
 
+// RepositoriesGetRequiredStatusChecks calls the Repositories.GetRequiredStatusChecks method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesGetRequiredStatusChecks(ctx context.Context, branch string) (*github.RequiredStatusChecks, *github.Response, error) {
 	return c.Repositories.GetRequiredStatusChecks(ctx, c.Owner, c.Project, branch)
 }
 
+// RepositoriesListRequiredStatusChecksContexts calls the Repositories.ListRequiredStatusChecksContexts method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesListRequiredStatusChecksContexts(ctx context.Context, branch string) (contexts []string, resp *github.Response, err error) {
 	return c.Repositories.ListRequiredStatusChecksContexts(ctx, c.Owner, c.Project, branch)
 }
 
+// RepositoriesUpdateBranchProtection calls the Repositories.UpdateBranchProtection method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesUpdateBranchProtection(ctx context.Context, branch string, preq *github.ProtectionRequest) (*github.Protection, *github.Response, error) {
 	return c.Repositories.UpdateBranchProtection(ctx, c.Owner, c.Project, branch, preq)
 }
 
+// RepositoriesRemoveBranchProtection calls the Repositories.RemoveBranchProtection method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesRemoveBranchProtection(ctx context.Context, branch string) (*github.Response, error) {
 	return c.Repositories.RemoveBranchProtection(ctx, c.Owner, c.Project, branch)
 }
 
+// RepositoriesGetSignaturesProtectedBranch calls the Repositories.GetSignaturesProtectedBranch method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesGetSignaturesProtectedBranch(ctx context.Context, branch string) (*github.SignaturesProtectedBranch, *github.Response, error) {
 	return c.Repositories.GetSignaturesProtectedBranch(ctx, c.Owner, c.Project, branch)
 }
 
+// RepositoriesRequireSignaturesOnProtectedBranch calls the Repositories.RequireSignaturesOnProtectedBranch method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesRequireSignaturesOnProtectedBranch(ctx context.Context, branch string) (*github.SignaturesProtectedBranch, *github.Response, error) {
 	return c.Repositories.RequireSignaturesOnProtectedBranch(ctx, c.Owner, c.Project, branch)
 }
 
+// RepositoriesOptionalSignaturesOnProtectedBranch calls the Repositories.OptionalSignaturesOnProtectedBranch method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesOptionalSignaturesOnProtectedBranch(ctx context.Context, branch string) (*github.Response, error) {
 	return c.Repositories.OptionalSignaturesOnProtectedBranch(ctx, c.Owner, c.Project, branch)
 }
 
+// RepositoriesUpdateRequiredStatusChecks calls the Repositories.UpdateRequiredStatusChecks method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesUpdateRequiredStatusChecks(ctx context.Context, branch string, sreq *github.RequiredStatusChecksRequest) (*github.RequiredStatusChecks, *github.Response, error) {
 	return c.Repositories.UpdateRequiredStatusChecks(ctx, c.Owner, c.Project, branch, sreq)
 }
 
+// RepositoriesLicense calls the Repositories.License method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesLicense(ctx context.Context) (*github.RepositoryLicense, *github.Response, error) {
 	return c.Repositories.License(ctx, c.Owner, c.Project)
 }
 
+// RepositoriesGetPullRequestReviewEnforcement calls the Repositories.GetPullRequestReviewEnforcement method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesGetPullRequestReviewEnforcement(ctx context.Context, branch string) (*github.PullRequestReviewsEnforcement, *github.Response, error) {
 	return c.Repositories.GetPullRequestReviewEnforcement(ctx, c.Owner, c.Project, branch)
 }
 
+// RepositoriesUpdatePullRequestReviewEnforcement calls the Repositories.UpdatePullRequestReviewEnforcement method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesUpdatePullRequestReviewEnforcement(ctx context.Context, branch string, patch *github.PullRequestReviewsEnforcementUpdate) (*github.PullRequestReviewsEnforcement, *github.Response, error) {
 	return c.Repositories.UpdatePullRequestReviewEnforcement(ctx, c.Owner, c.Project, branch, patch)
 }
 
+// RepositoriesDisableDismissalRestrictions calls the Repositories.DisableDismissalRestrictions method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesDisableDismissalRestrictions(ctx context.Context, branch string) (*github.PullRequestReviewsEnforcement, *github.Response, error) {
 	return c.Repositories.DisableDismissalRestrictions(ctx, c.Owner, c.Project, branch)
 }
 
+// RepositoriesRemovePullRequestReviewEnforcement calls the Repositories.RemovePullRequestReviewEnforcement method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesRemovePullRequestReviewEnforcement(ctx context.Context, branch string) (*github.Response, error) {
 	return c.Repositories.RemovePullRequestReviewEnforcement(ctx, c.Owner, c.Project, branch)
 }
 
+// RepositoriesGetAdminEnforcement calls the Repositories.GetAdminEnforcement method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesGetAdminEnforcement(ctx context.Context, branch string) (*github.AdminEnforcement, *github.Response, error) {
 	return c.Repositories.GetAdminEnforcement(ctx, c.Owner, c.Project, branch)
 }
 
+// RepositoriesAddAdminEnforcement calls the Repositories.AddAdminEnforcement method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesAddAdminEnforcement(ctx context.Context, branch string) (*github.AdminEnforcement, *github.Response, error) {
 	return c.Repositories.AddAdminEnforcement(ctx, c.Owner, c.Project, branch)
 }
 
+// RepositoriesRemoveAdminEnforcement calls the Repositories.RemoveAdminEnforcement method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesRemoveAdminEnforcement(ctx context.Context, branch string) (*github.Response, error) {
 	return c.Repositories.RemoveAdminEnforcement(ctx, c.Owner, c.Project, branch)
 }
 
+// RepositoriesListAllTopics calls the Repositories.ListAllTopics method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesListAllTopics(ctx context.Context) ([]string, *github.Response, error) {
 	return c.Repositories.ListAllTopics(ctx, c.Owner, c.Project)
 }
 
+// RepositoriesReplaceAllTopics calls the Repositories.ReplaceAllTopics method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesReplaceAllTopics(ctx context.Context, topics []string) ([]string, *github.Response, error) {
 	return c.Repositories.ReplaceAllTopics(ctx, c.Owner, c.Project, topics)
 }
 
+// RepositoriesListApps calls the Repositories.ListApps method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesListApps(ctx context.Context, branch string) ([]*github.App, *github.Response, error) {
 	return c.Repositories.ListApps(ctx, c.Owner, c.Project, branch)
 }
 
+// RepositoriesReplaceAppRestrictions calls the Repositories.ReplaceAppRestrictions method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesReplaceAppRestrictions(ctx context.Context, branch string, slug []string) ([]*github.App, *github.Response, error) {
 	return c.Repositories.ReplaceAppRestrictions(ctx, c.Owner, c.Project, branch, slug)
 }
 
+// RepositoriesAddAppRestrictions calls the Repositories.AddAppRestrictions method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesAddAppRestrictions(ctx context.Context, branch string, slug []string) ([]*github.App, *github.Response, error) {
 	return c.Repositories.AddAppRestrictions(ctx, c.Owner, c.Project, branch, slug)
 }
 
+// RepositoriesRemoveAppRestrictions calls the Repositories.RemoveAppRestrictions method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesRemoveAppRestrictions(ctx context.Context, branch string, slug []string) ([]*github.App, *github.Response, error) {
 	return c.Repositories.RemoveAppRestrictions(ctx, c.Owner, c.Project, branch, slug)
 }
 
+// RepositoriesTransfer calls the Repositories.Transfer method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesTransfer(ctx context.Context, transfer github.TransferRequest) (*github.Repository, *github.Response, error) {
 	return c.Repositories.Transfer(ctx, c.Owner, c.Project, transfer)
 }
 
+// RepositoriesDispatch calls the Repositories.Dispatch method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesDispatch(ctx context.Context, opts github.DispatchRequestOptions) (*github.Repository, *github.Response, error) {
 	return c.Repositories.Dispatch(ctx, c.Owner, c.Project, opts)
 }
 
+// RepositoriesListCollaborators calls the Repositories.ListCollaborators method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesListCollaborators(ctx context.Context, opts *github.ListCollaboratorsOptions) ([]*github.User, *github.Response, error) {
 	return c.Repositories.ListCollaborators(ctx, c.Owner, c.Project, opts)
 }
 
+// RepositoriesIsCollaborator calls the Repositories.IsCollaborator method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesIsCollaborator(ctx context.Context, user string) (bool, *github.Response, error) {
 	return c.Repositories.IsCollaborator(ctx, c.Owner, c.Project, user)
 }
 
+// RepositoriesGetPermissionLevel calls the Repositories.GetPermissionLevel method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesGetPermissionLevel(ctx context.Context, user string) (*github.RepositoryPermissionLevel, *github.Response, error) {
 	return c.Repositories.GetPermissionLevel(ctx, c.Owner, c.Project, user)
 }
 
+// RepositoriesAddCollaborator calls the Repositories.AddCollaborator method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesAddCollaborator(ctx context.Context, user string, opts *github.RepositoryAddCollaboratorOptions) (*github.CollaboratorInvitation, *github.Response, error) {
 	return c.Repositories.AddCollaborator(ctx, c.Owner, c.Project, user, opts)
 }
 
+// RepositoriesRemoveCollaborator calls the Repositories.RemoveCollaborator method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesRemoveCollaborator(ctx context.Context, user string) (*github.Response, error) {
 	return c.Repositories.RemoveCollaborator(ctx, c.Owner, c.Project, user)
 }
 
+// RepositoriesListComments calls the Repositories.ListComments method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesListComments(ctx context.Context, opts *github.ListOptions) ([]*github.RepositoryComment, *github.Response, error) {
 	return c.Repositories.ListComments(ctx, c.Owner, c.Project, opts)
 }
 
+// RepositoriesListCommitComments calls the Repositories.ListCommitComments method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesListCommitComments(ctx context.Context, sha string, opts *github.ListOptions) ([]*github.RepositoryComment, *github.Response, error) {
 	return c.Repositories.ListCommitComments(ctx, c.Owner, c.Project, sha, opts)
 }
 
+// RepositoriesCreateComment calls the Repositories.CreateComment method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesCreateComment(ctx context.Context, sha string, comment *github.RepositoryComment) (*github.RepositoryComment, *github.Response, error) {
 	return c.Repositories.CreateComment(ctx, c.Owner, c.Project, sha, comment)
 }
 
+// RepositoriesGetComment calls the Repositories.GetComment method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesGetComment(ctx context.Context, id int64) (*github.RepositoryComment, *github.Response, error) {
 	return c.Repositories.GetComment(ctx, c.Owner, c.Project, id)
 }
 
+// RepositoriesUpdateComment calls the Repositories.UpdateComment method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesUpdateComment(ctx context.Context, id int64, comment *github.RepositoryComment) (*github.RepositoryComment, *github.Response, error) {
 	return c.Repositories.UpdateComment(ctx, c.Owner, c.Project, id, comment)
 }
 
+// RepositoriesDeleteComment calls the Repositories.DeleteComment method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesDeleteComment(ctx context.Context, id int64) (*github.Response, error) {
 	return c.Repositories.DeleteComment(ctx, c.Owner, c.Project, id)
 }
 
+// RepositoriesListCommits calls the Repositories.ListCommits method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesListCommits(ctx context.Context, opts *github.CommitsListOptions) ([]*github.RepositoryCommit, *github.Response, error) {
 	return c.Repositories.ListCommits(ctx, c.Owner, c.Project, opts)
 }
 
+// RepositoriesGetCommit calls the Repositories.GetCommit method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesGetCommit(ctx context.Context, sha string) (*github.RepositoryCommit, *github.Response, error) {
 	return c.Repositories.GetCommit(ctx, c.Owner, c.Project, sha)
 }
 
+// RepositoriesGetCommitRaw calls the Repositories.GetCommitRaw method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesGetCommitRaw(ctx context.Context, sha string, opts github.RawOptions) (string, *github.Response, error) {
 	return c.Repositories.GetCommitRaw(ctx, c.Owner, c.Project, sha, opts)
 }
 
+// RepositoriesGetCommitSHA1 calls the Repositories.GetCommitSHA1 method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesGetCommitSHA1(ctx context.Context, ref string, lastSHA string) (string, *github.Response, error) {
 	return c.Repositories.GetCommitSHA1(ctx, c.Owner, c.Project, ref, lastSHA)
 }
 
+// RepositoriesCompareCommits calls the Repositories.CompareCommits method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesCompareCommits(ctx context.Context, base string, head string) (*github.CommitsComparison, *github.Response, error) {
 	return c.Repositories.CompareCommits(ctx, c.Owner, c.Project, base, head)
 }
 
+// RepositoriesListBranchesHeadCommit calls the Repositories.ListBranchesHeadCommit method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesListBranchesHeadCommit(ctx context.Context, sha string) ([]*github.BranchCommit, *github.Response, error) {
 	return c.Repositories.ListBranchesHeadCommit(ctx, c.Owner, c.Project, sha)
 }
 
+// RepositoriesGetCommunityHealthMetrics calls the Repositories.GetCommunityHealthMetrics method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesGetCommunityHealthMetrics(ctx context.Context) (*github.CommunityHealthMetrics, *github.Response, error) {
 	return c.Repositories.GetCommunityHealthMetrics(ctx, c.Owner, c.Project)
 }
 
+// RepositoriesGetReadme calls the Repositories.GetReadme method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesGetReadme(ctx context.Context, opts *github.RepositoryContentGetOptions) (*github.RepositoryContent, *github.Response, error) {
 	return c.Repositories.GetReadme(ctx, c.Owner, c.Project, opts)
 }
 
+// RepositoriesDownloadContents calls the Repositories.DownloadContents method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesDownloadContents(ctx context.Context, filepath string, opts *github.RepositoryContentGetOptions) (io.ReadCloser, error) {
 	return c.Repositories.DownloadContents(ctx, c.Owner, c.Project, filepath, opts)
 }
 
+// RepositoriesGetContents calls the Repositories.GetContents method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesGetContents(ctx context.Context, path string, opts *github.RepositoryContentGetOptions) (fileContent *github.RepositoryContent, directoryContent []*github.RepositoryContent, resp *github.Response, err error) {
 	return c.Repositories.GetContents(ctx, c.Owner, c.Project, path, opts)
 }
 
+// RepositoriesCreateFile calls the Repositories.CreateFile method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesCreateFile(ctx context.Context, path string, opts *github.RepositoryContentFileOptions) (*github.RepositoryContentResponse, *github.Response, error) {
 	return c.Repositories.CreateFile(ctx, c.Owner, c.Project, path, opts)
 }
 
+// RepositoriesUpdateFile calls the Repositories.UpdateFile method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesUpdateFile(ctx context.Context, path string, opts *github.RepositoryContentFileOptions) (*github.RepositoryContentResponse, *github.Response, error) {
 	return c.Repositories.UpdateFile(ctx, c.Owner, c.Project, path, opts)
 }
 
+// RepositoriesDeleteFile calls the Repositories.DeleteFile method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesDeleteFile(ctx context.Context, path string, opts *github.RepositoryContentFileOptions) (*github.RepositoryContentResponse, *github.Response, error) {
 	return c.Repositories.DeleteFile(ctx, c.Owner, c.Project, path, opts)
 }
 
+// RepositoriesListDeployments calls the Repositories.ListDeployments method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesListDeployments(ctx context.Context, opts *github.DeploymentsListOptions) ([]*github.Deployment, *github.Response, error) {
 	return c.Repositories.ListDeployments(ctx, c.Owner, c.Project, opts)
 }
 
+// RepositoriesGetDeployment calls the Repositories.GetDeployment method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesGetDeployment(ctx context.Context, deploymentID int64) (*github.Deployment, *github.Response, error) {
 	return c.Repositories.GetDeployment(ctx, c.Owner, c.Project, deploymentID)
 }
 
+// RepositoriesCreateDeployment calls the Repositories.CreateDeployment method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesCreateDeployment(ctx context.Context, request *github.DeploymentRequest) (*github.Deployment, *github.Response, error) {
 	return c.Repositories.CreateDeployment(ctx, c.Owner, c.Project, request)
 }
 
+// RepositoriesListDeploymentStatuses calls the Repositories.ListDeploymentStatuses method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesListDeploymentStatuses(ctx context.Context, deployment int64, opts *github.ListOptions) ([]*github.DeploymentStatus, *github.Response, error) {
 	return c.Repositories.ListDeploymentStatuses(ctx, c.Owner, c.Project, deployment, opts)
 }
 
+// RepositoriesGetDeploymentStatus calls the Repositories.GetDeploymentStatus method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesGetDeploymentStatus(ctx context.Context, deploymentID int64, deploymentStatusID int64) (*github.DeploymentStatus, *github.Response, error) {
 	return c.Repositories.GetDeploymentStatus(ctx, c.Owner, c.Project, deploymentID, deploymentStatusID)
 }
 
+// RepositoriesCreateDeploymentStatus calls the Repositories.CreateDeploymentStatus method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesCreateDeploymentStatus(ctx context.Context, deployment int64, request *github.DeploymentStatusRequest) (*github.DeploymentStatus, *github.Response, error) {
 	return c.Repositories.CreateDeploymentStatus(ctx, c.Owner, c.Project, deployment, request)
 }
 
+// RepositoriesListForks calls the Repositories.ListForks method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesListForks(ctx context.Context, opts *github.RepositoryListForksOptions) ([]*github.Repository, *github.Response, error) {
 	return c.Repositories.ListForks(ctx, c.Owner, c.Project, opts)
 }
 
+// RepositoriesCreateFork calls the Repositories.CreateFork method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesCreateFork(ctx context.Context, opts *github.RepositoryCreateForkOptions) (*github.Repository, *github.Response, error) {
 	return c.Repositories.CreateFork(ctx, c.Owner, c.Project, opts)
 }
 
+// RepositoriesCreateHook calls the Repositories.CreateHook method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesCreateHook(ctx context.Context, hook *github.Hook) (*github.Hook, *github.Response, error) {
 	return c.Repositories.CreateHook(ctx, c.Owner, c.Project, hook)
 }
 
+// RepositoriesListHooks calls the Repositories.ListHooks method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesListHooks(ctx context.Context, opts *github.ListOptions) ([]*github.Hook, *github.Response, error) {
 	return c.Repositories.ListHooks(ctx, c.Owner, c.Project, opts)
 }
 
+// RepositoriesGetHook calls the Repositories.GetHook method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesGetHook(ctx context.Context, id int64) (*github.Hook, *github.Response, error) {
 	return c.Repositories.GetHook(ctx, c.Owner, c.Project, id)
 }
 
+// RepositoriesEditHook calls the Repositories.EditHook method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesEditHook(ctx context.Context, id int64, hook *github.Hook) (*github.Hook, *github.Response, error) {
 	return c.Repositories.EditHook(ctx, c.Owner, c.Project, id, hook)
 }
 
+// RepositoriesDeleteHook calls the Repositories.DeleteHook method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesDeleteHook(ctx context.Context, id int64) (*github.Response, error) {
 	return c.Repositories.DeleteHook(ctx, c.Owner, c.Project, id)
 }
 
+// RepositoriesPingHook calls the Repositories.PingHook method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesPingHook(ctx context.Context, id int64) (*github.Response, error) {
 	return c.Repositories.PingHook(ctx, c.Owner, c.Project, id)
 }
 
+// RepositoriesTestHook calls the Repositories.TestHook method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesTestHook(ctx context.Context, id int64) (*github.Response, error) {
 	return c.Repositories.TestHook(ctx, c.Owner, c.Project, id)
 }
 
+// RepositoriesListInvitations calls the Repositories.ListInvitations method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesListInvitations(ctx context.Context, opts *github.ListOptions) ([]*github.RepositoryInvitation, *github.Response, error) {
 	return c.Repositories.ListInvitations(ctx, c.Owner, c.Project, opts)
 }
 
+// RepositoriesDeleteInvitation calls the Repositories.DeleteInvitation method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesDeleteInvitation(ctx context.Context, invitationID int64) (*github.Response, error) {
 	return c.Repositories.DeleteInvitation(ctx, c.Owner, c.Project, invitationID)
 }
 
+// RepositoriesUpdateInvitation calls the Repositories.UpdateInvitation method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesUpdateInvitation(ctx context.Context, invitationID int64, permissions string) (*github.RepositoryInvitation, *github.Response, error) {
 	return c.Repositories.UpdateInvitation(ctx, c.Owner, c.Project, invitationID, permissions)
 }
 
+// RepositoriesListKeys calls the Repositories.ListKeys method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesListKeys(ctx context.Context, opts *github.ListOptions) ([]*github.Key, *github.Response, error) {
 	return c.Repositories.ListKeys(ctx, c.Owner, c.Project, opts)
 }
 
+// RepositoriesGetKey calls the Repositories.GetKey method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesGetKey(ctx context.Context, id int64) (*github.Key, *github.Response, error) {
 	return c.Repositories.GetKey(ctx, c.Owner, c.Project, id)
 }
 
+// RepositoriesCreateKey calls the Repositories.CreateKey method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesCreateKey(ctx context.Context, key *github.Key) (*github.Key, *github.Response, error) {
 	return c.Repositories.CreateKey(ctx, c.Owner, c.Project, key)
 }
 
+// RepositoriesDeleteKey calls the Repositories.DeleteKey method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesDeleteKey(ctx context.Context, id int64) (*github.Response, error) {
 	return c.Repositories.DeleteKey(ctx, c.Owner, c.Project, id)
 }
 
+// RepositoriesMerge calls the Repositories.Merge method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesMerge(ctx context.Context, request *github.RepositoryMergeRequest) (*github.RepositoryCommit, *github.Response, error) {
 	return c.Repositories.Merge(ctx, c.Owner, c.Project, request)
 }
 
+// RepositoriesEnablePages calls the Repositories.EnablePages method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesEnablePages(ctx context.Context, pages *github.Pages) (*github.Pages, *github.Response, error) {
 	return c.Repositories.EnablePages(ctx, c.Owner, c.Project, pages)
 }
 
+// RepositoriesUpdatePages calls the Repositories.UpdatePages method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesUpdatePages(ctx context.Context, opts *github.PagesUpdate) (*github.Response, error) {
 	return c.Repositories.UpdatePages(ctx, c.Owner, c.Project, opts)
 }
 
+// RepositoriesDisablePages calls the Repositories.DisablePages method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesDisablePages(ctx context.Context) (*github.Response, error) {
 	return c.Repositories.DisablePages(ctx, c.Owner, c.Project)
 }
 
+// RepositoriesGetPagesInfo calls the Repositories.GetPagesInfo method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesGetPagesInfo(ctx context.Context) (*github.Pages, *github.Response, error) {
 	return c.Repositories.GetPagesInfo(ctx, c.Owner, c.Project)
 }
 
+// RepositoriesListPagesBuilds calls the Repositories.ListPagesBuilds method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesListPagesBuilds(ctx context.Context, opts *github.ListOptions) ([]*github.PagesBuild, *github.Response, error) {
 	return c.Repositories.ListPagesBuilds(ctx, c.Owner, c.Project, opts)
 }
 
+// RepositoriesGetLatestPagesBuild calls the Repositories.GetLatestPagesBuild method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesGetLatestPagesBuild(ctx context.Context) (*github.PagesBuild, *github.Response, error) {
 	return c.Repositories.GetLatestPagesBuild(ctx, c.Owner, c.Project)
 }
 
+// RepositoriesGetPageBuild calls the Repositories.GetPageBuild method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesGetPageBuild(ctx context.Context, id int64) (*github.PagesBuild, *github.Response, error) {
 	return c.Repositories.GetPageBuild(ctx, c.Owner, c.Project, id)
 }
 
+// RepositoriesRequestPageBuild calls the Repositories.RequestPageBuild method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesRequestPageBuild(ctx context.Context) (*github.PagesBuild, *github.Response, error) {
 	return c.Repositories.RequestPageBuild(ctx, c.Owner, c.Project)
 }
 
+// RepositoriesListPreReceiveHooks calls the Repositories.ListPreReceiveHooks method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesListPreReceiveHooks(ctx context.Context, opts *github.ListOptions) ([]*github.PreReceiveHook, *github.Response, error) {
 	return c.Repositories.ListPreReceiveHooks(ctx, c.Owner, c.Project, opts)
 }
 
+// RepositoriesGetPreReceiveHook calls the Repositories.GetPreReceiveHook method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesGetPreReceiveHook(ctx context.Context, id int64) (*github.PreReceiveHook, *github.Response, error) {
 	return c.Repositories.GetPreReceiveHook(ctx, c.Owner, c.Project, id)
 }
 
+// RepositoriesUpdatePreReceiveHook calls the Repositories.UpdatePreReceiveHook method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesUpdatePreReceiveHook(ctx context.Context, id int64, hook *github.PreReceiveHook) (*github.PreReceiveHook, *github.Response, error) {
 	return c.Repositories.UpdatePreReceiveHook(ctx, c.Owner, c.Project, id, hook)
 }
 
+// RepositoriesDeletePreReceiveHook calls the Repositories.DeletePreReceiveHook method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesDeletePreReceiveHook(ctx context.Context, id int64) (*github.Response, error) {
 	return c.Repositories.DeletePreReceiveHook(ctx, c.Owner, c.Project, id)
 }
 
+// RepositoriesListProjects calls the Repositories.ListProjects method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesListProjects(ctx context.Context, opts *github.ProjectListOptions) ([]*github.Project, *github.Response, error) {
 	return c.Repositories.ListProjects(ctx, c.Owner, c.Project, opts)
 }
 
+// RepositoriesCreateProject calls the Repositories.CreateProject method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesCreateProject(ctx context.Context, opts *github.ProjectOptions) (*github.Project, *github.Response, error) {
 	return c.Repositories.CreateProject(ctx, c.Owner, c.Project, opts)
 }
 
+// RepositoriesListReleases calls the Repositories.ListReleases method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesListReleases(ctx context.Context, opts *github.ListOptions) ([]*github.RepositoryRelease, *github.Response, error) {
 	return c.Repositories.ListReleases(ctx, c.Owner, c.Project, opts)
 }
 
+// RepositoriesGetRelease calls the Repositories.GetRelease method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesGetRelease(ctx context.Context, id int64) (*github.RepositoryRelease, *github.Response, error) {
 	return c.Repositories.GetRelease(ctx, c.Owner, c.Project, id)
 }
 
+// RepositoriesGetLatestRelease calls the Repositories.GetLatestRelease method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesGetLatestRelease(ctx context.Context) (*github.RepositoryRelease, *github.Response, error) {
 	return c.Repositories.GetLatestRelease(ctx, c.Owner, c.Project)
 }
 
+// RepositoriesGetReleaseByTag calls the Repositories.GetReleaseByTag method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesGetReleaseByTag(ctx context.Context, tag string) (*github.RepositoryRelease, *github.Response, error) {
 	return c.Repositories.GetReleaseByTag(ctx, c.Owner, c.Project, tag)
 }
 
+// RepositoriesCreateRelease calls the Repositories.CreateRelease method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesCreateRelease(ctx context.Context, release *github.RepositoryRelease) (*github.RepositoryRelease, *github.Response, error) {
 	return c.Repositories.CreateRelease(ctx, c.Owner, c.Project, release)
 }
 
+// RepositoriesEditRelease calls the Repositories.EditRelease method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesEditRelease(ctx context.Context, id int64, release *github.RepositoryRelease) (*github.RepositoryRelease, *github.Response, error) {
 	return c.Repositories.EditRelease(ctx, c.Owner, c.Project, id, release)
 }
 
+// RepositoriesDeleteRelease calls the Repositories.DeleteRelease method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesDeleteRelease(ctx context.Context, id int64) (*github.Response, error) {
 	return c.Repositories.DeleteRelease(ctx, c.Owner, c.Project, id)
 }
 
+// RepositoriesListReleaseAssets calls the Repositories.ListReleaseAssets method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesListReleaseAssets(ctx context.Context, id int64, opts *github.ListOptions) ([]*github.ReleaseAsset, *github.Response, error) {
 	return c.Repositories.ListReleaseAssets(ctx, c.Owner, c.Project, id, opts)
 }
 
+// RepositoriesGetReleaseAsset calls the Repositories.GetReleaseAsset method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesGetReleaseAsset(ctx context.Context, id int64) (*github.ReleaseAsset, *github.Response, error) {
 	return c.Repositories.GetReleaseAsset(ctx, c.Owner, c.Project, id)
 }
 
+// RepositoriesDownloadReleaseAsset calls the Repositories.DownloadReleaseAsset method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesDownloadReleaseAsset(ctx context.Context, id int64, followRedirectsClient *http.Client) (rc io.ReadCloser, redirectURL string, err error) {
 	return c.Repositories.DownloadReleaseAsset(ctx, c.Owner, c.Project, id, followRedirectsClient)
 }
 
+// RepositoriesEditReleaseAsset calls the Repositories.EditReleaseAsset method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesEditReleaseAsset(ctx context.Context, id int64, release *github.ReleaseAsset) (*github.ReleaseAsset, *github.Response, error) {
 	return c.Repositories.EditReleaseAsset(ctx, c.Owner, c.Project, id, release)
 }
 
+// RepositoriesDeleteReleaseAsset calls the Repositories.DeleteReleaseAsset method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesDeleteReleaseAsset(ctx context.Context, id int64) (*github.Response, error) {
 	return c.Repositories.DeleteReleaseAsset(ctx, c.Owner, c.Project, id)
 }
 
+// RepositoriesUploadReleaseAsset calls the Repositories.UploadReleaseAsset method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesUploadReleaseAsset(ctx context.Context, id int64, opts *github.UploadOptions, file *os.File) (*github.ReleaseAsset, *github.Response, error) {
 	return c.Repositories.UploadReleaseAsset(ctx, c.Owner, c.Project, id, opts, file)
 }
 
+// RepositoriesListContributorsStats calls the Repositories.ListContributorsStats method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesListContributorsStats(ctx context.Context) ([]*github.ContributorStats, *github.Response, error) {
 	return c.Repositories.ListContributorsStats(ctx, c.Owner, c.Project)
 }
 
+// RepositoriesListCommitActivity calls the Repositories.ListCommitActivity method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesListCommitActivity(ctx context.Context) ([]*github.WeeklyCommitActivity, *github.Response, error) {
 	return c.Repositories.ListCommitActivity(ctx, c.Owner, c.Project)
 }
 
+// RepositoriesListCodeFrequency calls the Repositories.ListCodeFrequency method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesListCodeFrequency(ctx context.Context) ([]*github.WeeklyStats, *github.Response, error) {
 	return c.Repositories.ListCodeFrequency(ctx, c.Owner, c.Project)
 }
 
+// RepositoriesListParticipation calls the Repositories.ListParticipation method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesListParticipation(ctx context.Context) (*github.RepositoryParticipation, *github.Response, error) {
 	return c.Repositories.ListParticipation(ctx, c.Owner, c.Project)
 }
 
+// RepositoriesListPunchCard calls the Repositories.ListPunchCard method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesListPunchCard(ctx context.Context) ([]*github.PunchCard, *github.Response, error) {
 	return c.Repositories.ListPunchCard(ctx, c.Owner, c.Project)
 }
 
+// RepositoriesListStatuses calls the Repositories.ListStatuses method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesListStatuses(ctx context.Context, ref string, opts *github.ListOptions) ([]*github.RepoStatus, *github.Response, error) {
 	return c.Repositories.ListStatuses(ctx, c.Owner, c.Project, ref, opts)
 }
 
+// RepositoriesCreateStatus calls the Repositories.CreateStatus method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesCreateStatus(ctx context.Context, ref string, status *github.RepoStatus) (*github.RepoStatus, *github.Response, error) {
 	return c.Repositories.CreateStatus(ctx, c.Owner, c.Project, ref, status)
 }
 
+// RepositoriesGetCombinedStatus calls the Repositories.GetCombinedStatus method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesGetCombinedStatus(ctx context.Context, ref string, opts *github.ListOptions) (*github.CombinedStatus, *github.Response, error) {
 	return c.Repositories.GetCombinedStatus(ctx, c.Owner, c.Project, ref, opts)
 }
 
+// RepositoriesListTrafficReferrers calls the Repositories.ListTrafficReferrers method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesListTrafficReferrers(ctx context.Context) ([]*github.TrafficReferrer, *github.Response, error) {
 	return c.Repositories.ListTrafficReferrers(ctx, c.Owner, c.Project)
 }
 
+// RepositoriesListTrafficPaths calls the Repositories.ListTrafficPaths method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesListTrafficPaths(ctx context.Context) ([]*github.TrafficPath, *github.Response, error) {
 	return c.Repositories.ListTrafficPaths(ctx, c.Owner, c.Project)
 }
 
+// RepositoriesListTrafficViews calls the Repositories.ListTrafficViews method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesListTrafficViews(ctx context.Context, opts *github.TrafficBreakdownOptions) (*github.TrafficViews, *github.Response, error) {
 	return c.Repositories.ListTrafficViews(ctx, c.Owner, c.Project, opts)
 }
 
+// RepositoriesListTrafficClones calls the Repositories.ListTrafficClones method with
+// the relevant owner and repo arguments.
 func (c *Client) RepositoriesListTrafficClones(ctx context.Context, opts *github.TrafficBreakdownOptions) (*github.TrafficClones, *github.Response, error) {
 	return c.Repositories.ListTrafficClones(ctx, c.Owner, c.Project, opts)
 }

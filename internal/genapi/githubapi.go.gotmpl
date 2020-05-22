@@ -34,6 +34,8 @@ func NewClientWithToken(ctx context.Context, token string) *Client {
 }
 
 {{ range . }}
+// {{ .Field.Name }}{{ .Method.Name }} calls the {{ .Field.Name }}.{{ .Method.Name }} method with
+// the relevant owner and repo arguments.
 func (c *Client) {{ .Field.Name }}{{ .Method.Name }}(ctx context.Context, {{ .OtherParamsDefinition }}) {{ .ResultsDefinition }} {
 	return c.{{ .Field.Name }}.{{ .Method.Name }}(ctx, c.Owner, c.Project, {{ .OtherParamsUse }})
 }
