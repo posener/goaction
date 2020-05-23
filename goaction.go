@@ -15,7 +15,8 @@ Required Steps
 
 - [x] Push the project to Github.
 
-See simplest example for a Goaction script: (posener/goaction-example) https://github.com/posener/goaction-example.
+See simplest example for a Goaction script: (posener/goaction-example) https://github.com/posener/goaction-example,
+or an example that demonstrait using Github APIs: (posener/goaction-issues-example) https://github.com/posener/goaction-issues-example.
 
 Writing a Goaction Script
 
