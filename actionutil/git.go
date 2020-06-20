@@ -46,7 +46,7 @@ func GitDiffAll() ([]Diff, error) {
 	err = git("diff", "--staged", "--name-only").Iterate(func(path []byte) error {
 		diff, err := git("diff", "--staged", "--no-color", string(path)).Tail(-5).ToString()
 		if err != nil {
-			return err
+			return fmt.Errorf("git diff %q: %s", string(path), err)
 		}
 		diffs = append(diffs, Diff{Path: string(path), Diff: diff})
 		return nil
