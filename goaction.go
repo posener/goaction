@@ -235,11 +235,7 @@ func Project() string {
 
 // Branch returns the push branch for push flow or empty string for other flows.
 func Branch() string {
-	if Event == EventPush {
-		return strings.Split(Ref, "/")[2]
-	}
-	return ""
-
+	return strings.Split(Ref, "/")[2]
 }
 
 // PrNum returns pull request number for PR flow or -1 in other flows.
