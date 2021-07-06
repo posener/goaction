@@ -13,9 +13,12 @@ func main() {
 	// Write an output for the second action.
 	goaction.Output("out", "message", "output of first action")
 	// Set an environment variable for the second action.
-	goaction.Setenv("set", "set")
+	err := goaction.Setenv("set", "set")
+	if err != nil {
+		log.Fatal(err)
+	}
 	// Set an environment variable for the second action using export.
-	err := goaction.Export("export", "export")
+	err = goaction.Export("export", "export")
 	if err != nil {
 		log.Fatal(err)
 	}

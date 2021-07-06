@@ -167,6 +167,7 @@ var (
 	ForkedBaseRef = os.Getenv("GITHUB_BASE_REF")
 
 	eventPath = os.Getenv("GITHUB_EVENT_PATH")
+	envPath   = os.Getenv("GITHUB_ENV")
 
 	repoParts = strings.Split(Repository, "/")
 )
@@ -180,14 +181,23 @@ func init() {
 
 // Setenv sets an environment variable that will only be visible for all following Github actions in
 // the current workflow, but not in the current action.
-// See https://help.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-environment-variable.
-func Setenv(name string, value string) {
+// See  https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#environment-files.
+func Setenv(name string, value string) error {
 	if !CI {
-		return
+		return nil
 	}
 	// Store in the given environment variable name such that programs that expect this environment
 	// variable (not through goaction) can get it.
-	fmt.Printf("::set-env name=%s::%s\n", name, value)
+	f, err := os.OpenFile(envPath, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0)
+	if err != nil {
+		return fmt.Errorf("can't open env file %s: %s", envPath, err)
+	}
+	defer f.Close()
+	_, err = fmt.Fprintf(f, "%s=%s\n", name, value)
+	if err != nil {
+		return fmt.Errorf("failed writing to env file: %s", err)
+	}
+	return nil
 }
 
 // Export sets an environment variable that will also be visible for all following Github actions in
@@ -197,8 +207,7 @@ func Export(name string, value string) error {
 	if err != nil {
 		return err
 	}
-	Setenv(name, value)
-	return nil
+	return Setenv(name, value)
 }
 
 // Output sets Github action output.
