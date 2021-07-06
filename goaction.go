@@ -49,26 +49,29 @@ When a new commit is pushed, Goaction makes sure that the Github action files ar
 
 Add the following content to `.github/workflows/goaction.yml`
 
-	on:
-	  pull_request:
-	    branches: [master]
-	  push:
-	    branches: [master]
-	jobs:
-	  goaction:
-	    runs-on: ubuntu-latest
-	    steps:
-	    - name: Check out repository
-	      uses: actions/checkout@v2
-	    - name: Update action files
-	      uses: posener/goaction@v1
-	      with:
-	        # Optional: required only for commenting on PRs.
-	        github-token: '${{ secrets.GITHUB_TOKEN }}'
-	    # Optional: now that the script is a Github action, it is possible to run it in the
-	    # workflow.
-	    - name: Example
-	      uses: ./
+ on:
+   pull_request:
+     branches: [master]
+   push:
+     branches: [master]
+ permissions:
+   # Goaction needs permissions to update pull requests comments.
+   pull-requests: write
+ jobs:
+   goaction:
+     runs-on: ubuntu-latest
+     steps:
+     - name: Check out repository
+       uses: actions/checkout@v2
+     - name: Update action files
+       uses: posener/goaction@v1
+       with:
+         # Optional: required only for commenting on PRs.
+         github-token: '${{ secrets.GITHUB_TOKEN }}'
+     # Optional: now that the script is a Github action, it is possible to run it in the
+     # workflow.
+     - name: Example
+       uses: ./
 
 Goaction Artifacts
 
