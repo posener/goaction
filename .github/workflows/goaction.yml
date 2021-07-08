@@ -1,36 +1,37 @@
 on:
-    pull_request:
-      branches: [master]
-    push:
-      branches: [master]
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
 permissions:
-  # Goaction needs permissions to update pull requests comments.
+  # Goaction needs permissions to update pull requests comments and update contents.
   pull-requests: write
+  contents: write
 jobs:
-    goaction:
-      runs-on: ubuntu-latest
-      steps:
-      - name: Check out repository
-        uses: actions/checkout@v2
-      # Inception: install goaction from current code and
-      # update the action files.
-      - name: Install Go
-        uses: actions/setup-go@v1
-        with:
-          go-version: 1.14.x
-      - name: Generate new Action files using new code.
-        # Set CI=false to skip the CI flow of goaction.
-        env:
-          CI: false
-        run: go run ./cmd/goaction -path ./cmd/goaction
-      # Action files updated...
-      # Contine goaction with the normal flow.
-      - name: Update action files
-        uses: ./
-        with:
-          name: posener/goaction
-          description: Github actions for Go code
-          path: cmd/goaction
-          github-token: '${{ secrets.GITHUB_TOKEN }}'
-          icon: activity
-          color: blue
+  goaction:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v2
+    # Inception: install goaction from current code and
+    # update the action files.
+    - name: Install Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.14.x
+    - name: Generate new Action files using new code.
+      # Set CI=false to skip the CI flow of goaction.
+      env:
+        CI: false
+      run: go run ./cmd/goaction -path ./cmd/goaction
+    # Action files updated...
+    # Contine goaction with the normal flow.
+    - name: Update action files
+      uses: ./
+      with:
+        name: posener/goaction
+        description: Github actions for Go code
+        path: cmd/goaction
+        github-token: '${{ secrets.GITHUB_TOKEN }}'
+        icon: activity
+        color: blue

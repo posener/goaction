@@ -4,16 +4,17 @@ on:
   push:
     branches: [master]
 permissions:
-  # Goreadme needs permissions to update pull requests comments.
+  # Goreadme needs permissions to update pull requests comments and update contents.
   pull-requests: write
+  contents: write
 jobs:
-    goreadme:
-        runs-on: ubuntu-latest
-        steps:
-        - name: Check out repository
-          uses: actions/checkout@v2
-        - name: Update readme according to Go doc
-          uses: posener/goreadme@v1
-          with:
-            badge-godoc: true
-            github-token: '${{ secrets.GITHUB_TOKEN }}'
+  goreadme:
+      runs-on: ubuntu-latest
+      steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+      - name: Update readme according to Go doc
+        uses: posener/goreadme@v1
+        with:
+          badge-godoc: true
+          github-token: '${{ secrets.GITHUB_TOKEN }}'

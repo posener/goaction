@@ -51,12 +51,13 @@ Add the following content to `.github/workflows/goaction.yml`
 
  on:
    pull_request:
-     branches: [master]
+     branches: [main]
    push:
-     branches: [master]
+     branches: [main]
  permissions:
-   # Goaction needs permissions to update pull requests comments.
+   # Goaction needs permissions to update pull requests comments and update contents.
    pull-requests: write
+   contents: write
  jobs:
    goaction:
      runs-on: ubuntu-latest
