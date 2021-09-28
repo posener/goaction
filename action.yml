@@ -30,7 +30,7 @@ inputs:
     default: posener@gmail.com
     description: "Email for commit message."
     required: false
-  github-token:
+  GITHUB_TOKEN:
     description: "Github token for PR comments. Optional."
     required: false
 runs:
@@ -38,7 +38,7 @@ runs:
   image: Dockerfile
   env:
     email: "${{ inputs.email }}"
-    github-token: "${{ inputs.github-token }}"
+    GITHUB_TOKEN: "${{ inputs.GITHUB_TOKEN }}"
   args:
   - "-path=${{ inputs.path }}"
   - "-name=${{ inputs.name }}"
