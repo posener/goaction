@@ -17,4 +17,4 @@ jobs:
         uses: posener/goreadme@v1
         with:
           badge-godoc: true
-          github-token: '${{ secrets.GITHUB_TOKEN }}'
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'

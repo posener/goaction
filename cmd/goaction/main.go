@@ -37,7 +37,7 @@ var (
 	//goaction:default posener@gmail.com
 	email = os.Getenv("email")
 	//goaction:description Github token for PR comments. Optional.
-	githubToken = os.Getenv("github-token")
+	githubToken = os.Getenv("GITHUB_TOKEN")
 )
 
 const (

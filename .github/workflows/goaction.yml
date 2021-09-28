@@ -32,6 +32,6 @@ jobs:
         name: posener/goaction
         description: Github actions for Go code
         path: cmd/goaction
-        github-token: '${{ secrets.GITHUB_TOKEN }}'
+        GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         icon: activity
         color: blue
