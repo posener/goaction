@@ -72,7 +72,7 @@ jobs:
       uses: posener/goaction@v1
       with:
         # Optional: required only for commenting on PRs.
-        GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+        github-token: '${{ secrets.GITHUB_TOKEN }}'
     # Optional: now that the script is a Github action, it is possible to run it in the
     # workflow.
     - name: Example
