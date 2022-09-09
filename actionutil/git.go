@@ -15,7 +15,12 @@ func GitConfig(name, email string) error {
 	if err != nil {
 		return err
 	}
-	return git("config", "user.email", email).ToStdout()
+	err = git("config", "user.email", email).ToStdout()
+	if err != nil {
+		return err
+	}
+	// Prevent errors "fatal: detected dubious ownership in repository at ...".
+	return git("config", "--add", "safe.directory", "'*'").ToStdout()
 }
 
 // GitDiff returns diff of changes in a given file.
