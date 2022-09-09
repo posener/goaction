@@ -20,7 +20,7 @@ func GitConfig(name, email string) error {
 		return err
 	}
 	// Prevent errors "fatal: detected dubious ownership in repository at ...".
-	return git("config", "--add", "safe.directory", "'*'").ToStdout()
+	return git("config", "--global", "--add", "safe.directory", "'*'").ToStdout()
 }
 
 // GitDiff returns diff of changes in a given file.
